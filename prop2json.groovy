@@ -63,7 +63,7 @@ project "Properties2JSON",{
 				// println PropertyStucture.property[0].propertySheet.property.getClass() // class java.util.ArrayList
 				def OutputDataStructure = [(PropertyName):prop2json(PropertyStucture.property)]
 				println pretty(OutputDataStructure)
-				ef-setProperty("/myJob/PropertyJSON", value: pretty(OutputDataStructure))
+				ef.setProperty(propertyName: "/myJob/PropertyJSON", value: pretty(OutputDataStructure))
 			'''.stripIndent()
 	} // procedure
 } // project
