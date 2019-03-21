@@ -16,6 +16,8 @@ project "Properties2JSON",{
 	// Sample property sheet
 	property "root",{
 		property "rootProp", value: "xyz"
+		property "noval"
+		property "expansion", value: '$[/myProject]'
 		property "sub1",{
 				property "prop1", value: "123"
 				property "prop2", value: "456"
