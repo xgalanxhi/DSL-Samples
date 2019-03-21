@@ -52,7 +52,7 @@ project "Properties2JSON",{
 					def outStruct = [:]
 					struct.each { prop ->
 						if (prop?.propertySheet) {
-							propStruct = [:]
+							def propStruct = [:]
 							propStruct << prop2json(prop.propertySheet.property)
 							outStruct << [(prop.propertyName):propStruct]
 						} else {
