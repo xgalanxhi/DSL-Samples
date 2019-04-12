@@ -1,4 +1,4 @@
-/* Generate DSL for objects and all its dependencies
+/* Generate DSL for objects and all their dependencies
 
 Instruction
 -----------
@@ -10,23 +10,23 @@ What's been implemented and what's left to do
 ---------------------------------------------
 Releases
 -[x] Projects
--[x] Each self
+-[x] Each Release
 -[x] Procedures
 -[ ] Applications (process)
 -[ ] Applications (deployer)
--[ ] Pipelines
--[ ] Releases
+-[ ] Subpipelines
+-[ ] Subreleases
 Pipelines
 -[x] Projects
--[x] Each self
+-[x] Each Pipeline
 -[x] Procedures
 -[ ] Applications (process)
 -[ ] Applications (deployer)
--[ ] Pipelines
--[ ] Releases 
+-[ ] Subpipelines
+-[ ] Subreleases 
 Applications
 -[x] Projects
--[x] Each Self
+-[x] Each Application
 -[x] Procedures (not from plugins)
 	-[x] Projects (Application and Component process steps)
 	-[ ] Subprocedures (recursive)
@@ -45,11 +45,18 @@ Todo
 - Microservices
 - Artifacts
 - Artifact Versions
+- Plugin Configurations
+- Workspaces
 
 */
 
-// User editable. These are arrays of lists, where the list needs to include projectName and one of
-// releaseName, pipelineName, applicationName
+/*
+	User editable. These are arrays of lists, where each list needs to include projectName and one of
+	releaseName, pipelineName, or applicationName keys and values, e.g.,
+		def Releases = [[projectName: "My Project", releaseName: "My Release"]]
+		def Pipelines = [[projectName: "My Project", pipelineName: "My Pipeline"]]
+		def Applications = [[projectName: "My Project", applicationName: "My Application"]]
+*/
 def Releases = []
 def Pipelines = []
 def Applications = [[projectName: "SF", applicationName: "Store Front"]]
