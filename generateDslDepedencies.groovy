@@ -50,17 +50,28 @@ Todo
 
 */
 
-/*
-	User editable. These are arrays of lists, where each list needs to include projectName and one of
-	releaseName, pipelineName, or applicationName keys and values, e.g.,
-		def Releases = [[projectName: "My Project", releaseName: "My Release"]]
-		def Pipelines = [[projectName: "My Project", pipelineName: "My Pipeline"]]
-		def Applications = [[projectName: "My Project", applicationName: "My Application"]]
+/* ------------------ Instruction for user edits ------------------------------
+	These are arrays of lists, where each list needs to include projectName and
+	one of releaseName, pipelineName, or applicationName keys and values, e.g.,
+		def Releases = [
+			[projectName: "My Project", releaseName: "My Release"],
+			[projectName: "My Other Project", releaseName: "My Other Release"]
+		]	
+		def Pipelines = [
+			[projectName: "My Project", pipelineName: "My Pipeline"]
+		]
+		def Applications = [
+			[projectName: "My Project", applicationName: "My Application"]
+		]
 */
+// ------------------ User edits go here  -------------------------------------
 def Releases = []
 def Pipelines = []
-def Applications = [[projectName: "SF", applicationName: "Store Front"]]
+def Applications = [
+		[projectName: "SF", applicationName: "Store Front"]
+	]
 
+// ------------------ Don't edit below here -----------------------------------
 // Don't edit
 def Projects = []
 def Procedures = []
@@ -156,44 +167,35 @@ Environments.each { env ->
 	}
 }
 
-// Workaround: getValue() below is introducing bogus first and last line. The following procedure strips these out.
-def striptFirstLast = { input ->
-	def stringInput = (String) input
-	def lineArray = (ArrayList) stringInput.split('\n')
-	lineArray.remove(lineArray.size()-1)
-	lineArray.remove(0)
-	return lineArray.join('\n') + '\n'
-}
-
 def dslOut = ""
 transaction {
 
 	Resources.each {
-		dslOut += striptFirstLast(generateDsl(path: "/resources/${it}").getValue())
+		dslOut += (String) generateDsl(path: "/resources/${it}").value
 	}
 	ResourcePools.each {
-		dslOut += striptFirstLast(generateDsl(path: "/resourcePools/${it.resourcePoolName}").getValue())
+		dslOut += (String) generateDsl(path: "/resourcePools/${it.resourcePoolName}").value
 	}
 	Projects.each {
 		dslOut += "project \"${it}\"" + '\n'
 	}
 	Procedures.each {
-		dslOut += striptFirstLast(generateDsl(path: "/projects/${it.projectName}/procedures/${it.procedureName}").getValue())
+		dslOut += (String) generateDsl(path: "/projects/${it.projectName}/procedures/${it.procedureName}").value
 	}
 	MasterComponents.each {
-		dslOut += striptFirstLast(generateDsl(path: "/projects/${it.projectName}/components/${it.componentName}").getValue())
+		dslOut += (String) generateDsl(path: "/projects/${it.projectName}/components/${it.componentName}").value
 	}
 	Environments.each {
-		dslOut += striptFirstLast(generateDsl(path: "/projects/${it.projectName}/environments/${it.environmentName}").getValue())
+		dslOut += (String) generateDsl(path: "/projects/${it.projectName}/environments/${it.environmentName}").value
 	}
 	Applications.each {
-		dslOut += striptFirstLast(generateDsl(path: "/projects/${it.projectName}/applications/${it.applicationName}").getValue())
+		dslOut += (String) generateDsl(path: "/projects/${it.projectName}/applications/${it.applicationName}").value
 	}
 	Pipelines.each {
-		dslOut += striptFirstLast(generateDsl(path: "/projects/${it.projectName}/pipelines/${it.pipelineName}").getValue())
+		dslOut += (String) generateDsl(path: "/projects/${it.projectName}/pipelines/${it.pipelineName}").value
 	}
 	Releases.each {
-		dslOut += striptFirstLast(generateDsl(path: "/projects/${it.projectName}/releases/${it.releaseName}").getValue())
+		dslOut += generateDsl(path: "/projects/${it.projectName}/releases/${it.releaseName}").value
 	}
 }
 
