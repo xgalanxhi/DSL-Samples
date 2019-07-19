@@ -3,7 +3,7 @@
 */
 
 def conf="snow-config"
-def proj="/plugins/EC-ServiceNow/project",
+def proj="/plugins/EC-ServiceNow/project"
 def uName='myUser'
 def pwd='mypassword'        // or you would better grab it from an extertnal source
 
@@ -34,12 +34,12 @@ if (! getProperty("$proj/ServiceNow_cfgs/$conf")) {
   // overwrite the  credential
   credential(
     projectName: proj,
-    userNane: uName,
+    userNane: uName
     password: pwd
     credentialName: conf
   )
   // overtrite properties
   setProperty("$proj/ServiceNow_cfgs/$conf/host": value: "http://myNewHost"
   setProperty("$proj/ServiceNow_cfgs/$conf/http_proxy": value: "http://myProxy"
- .....
+  //.....
 }
