@@ -24,6 +24,7 @@ To do:
 
 def uName='XXXXXXXXXXXXXXXXXXXX'
 def pwd='YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY'
+def AWS_role='arn:aws:iam::NNNNNNNNNNNN:role/xxxx_role'
 def ArtifactName = "com.cloudbees:myHelloWorld"
 
 def ProjectName = "Demo"
@@ -171,7 +172,7 @@ project ProjectName, {
 					processStep 'Create Lambda function', {
 						applicationTierName = null
 						actualParameter = [
-							'aws_role': 'arn:aws:iam::547883162893:role/dmitriys_role',
+							'aws_role': AWS_role,
 							'config': 'Lambda',
 							'deployment_package_path': '/tmp/myHelloWorld.zip',
 							'function_name': '$[AppName]',
