@@ -16,7 +16,9 @@ Dependencies:
 	AWS Tokens
 	
 To do:
-- Implement undeploy function (not currently available in the EC-AWS-Lambda plugin)
+- Implement undeploy function (not currently available in the EC-AWS-Lambda plugin), http://jira/browse/PEFF-81
+	- workaround: aws lambda delete-function --function-name myHelloWorld_
+
 
 */
 
