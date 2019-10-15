@@ -17,6 +17,19 @@ ectool runProcedure "On line bank Release" --procedureName "Assemble"
 
 * Once this procedure has finished executing, you should see the new Release "Quarterly Online Banking Release"
 * Also created is a procedure to remove all generated objects for this release model, use this to clean up
+* Run the release model through production
+* Create a new artifact version for one of the applications:
+```
+ectool runProcedure "On line bank Release" --procedureName "Create Application" --actualParameter \
+appName="OB - Fund Transfer" \
+artifactGroup="com.mybank.apps" \
+artifactKey="fund" \
+envs="Dev" \
+projName="On line bank Release" \
+snapEnv="Dev" \
+version=2.0
+```
+* Run through one stage of the release pipeline and note the Path to Production view
 
 ## Instructions When using flow-demo
 If you have flow-demo installed, run procedure "On line bank Release"::"Assemble" from the UI
