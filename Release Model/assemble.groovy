@@ -60,6 +60,7 @@ project projectName, {
 		formalParameter "artifactKey", required: "1"
 		formalParameter "envs", required: "1"
 		formalParameter "snapEnv", required: "1"
+		formalParameter "runAppCreation", required: "1"
 
 	step "Create Installer sh",
 	  subproject : "/plugins/EC-FileOps/project",
@@ -89,7 +90,7 @@ project projectName, {
 		includePatterns: "installer.*",
 		repositoryName: "default",  // required
 	  ]
-	step "Generate Application",
+	step "Generate Application", condition: '$[runAppCreation]',
 			command: new File(dslDir + "createAppModel.groovy").text,
 			shell: "ectool evalDsl --dslFile {0}"
 	step "Deploy to snapshot environment",
@@ -156,7 +157,8 @@ project projectName, {
 					artifactGroup: artifactGroup,
 					artifactKey: (String) app.artifactKey,
 					envs: (String) app.envs.join(",")+","+app.snapEnv,
-					snapEnv: app.snapEnv
+					snapEnv: app.snapEnv,
+					runAppCreation:"1"
 				],
 				parallel: "false"
 		}

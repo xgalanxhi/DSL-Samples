@@ -24,10 +24,11 @@ ectool runProcedure "On line bank Release" --procedureName "Create Application" 
 appName="OB - Fund Transfer" \
 artifactGroup="com.mybank.apps" \
 artifactKey="fund" \
-envs="Dev" \
+envs="Banking-DEV" \
 projName="On line bank Release" \
-snapEnv="Dev" \
-version=2.0
+snapEnv="Banking-DEV" \
+version=2.0 \
+runAppCreation=0
 ```
 * Update the application section of the release to use this new snapshot version, 2.0
 * Run through one stage of the release pipeline and note the Path to Production view
