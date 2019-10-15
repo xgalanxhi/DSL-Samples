@@ -114,12 +114,12 @@ project projName, {
 		}
 		
 		process processName: "Deploy",{
-            formalParameter 'ErrorLevel', defaultValue: null, {
+            formalParameter 'ErrorLevel', defaultValue: "INFO", {
               description = 'Specify the Error Level for the deployment'
               expansionDeferred = '0'
               label = null
               orderIndex = '1'
-              required = '1'
+              required = '0'
               type = 'select'
             }
 			processStep  processStepName: "Install $artifactKey", 
