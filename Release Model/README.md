@@ -29,6 +29,7 @@ projName="On line bank Release" \
 snapEnv="Dev" \
 version=2.0
 ```
+* Update the application section of the release to use this new snapshot version, 2.0
 * Run through one stage of the release pipeline and note the Path to Production view
 
 ## Instructions When using flow-demo
