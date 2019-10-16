@@ -32,7 +32,9 @@ project projName, {
 							stages.each { st ->
 								deployerConfiguration environmentName: "Banking-${st}",
 									environmentProjectName: projectName,
-									stageName: st
+									stageName: st,
+									snapshotName: null
+									
 								
 							} // Each stage
 						} // Deployer application
