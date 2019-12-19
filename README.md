@@ -1,4 +1,3 @@
 # DSL-Samples
 
-
-This plugin has been permanently moved to https://github.com/electric-cloud-community/DSL-Samples
+This is a collection of DSL samples that illustrate how to use CloudBees Flow functions.
