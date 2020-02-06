@@ -59,12 +59,10 @@ PluginConfigs.each { conf ->
 	Cred.password = pwd
 	def Creds=[Cred]
 
-	// Call the config creation procedure
-	// if it does not already exists
-	// by checking if the config property (name may be different in different plugin)
 	def Params = [ config:confName, credential: Cred.name] + conf.Parameters
-	// ****** Add parameters here **********
+	
 	if (! (confName in ExistingConfigs)) {
+		// Create a new configuration by running the plugin create configuration procedure
 		runProcedure(
 			projectName : proj,
 			procedureName : "CreateConfiguration",
@@ -72,18 +70,19 @@ PluginConfigs.each { conf ->
 			credential: Creds
 		)
 	} else {
+	/*
+		// Update the configuration
 		// overwrite the  credential
-		/*
 		credential(
 			projectName: proj,
 			userNane: uName
 			password: pwd
-			credentialName: conf
+			credentialName: confName
 		)
 		// overtrite properties
-		setProperty("$proj/ServiceNow_cfgs/$conf/host": value: "http://myNewHost"
-		setProperty("$proj/ServiceNow_cfgs/$conf/http_proxy": value: "http://myProxy"
-		//.....
-		*/
+		conf.Parameters.each { param, val ->
+			property "${ConfigPropertySheet}/${confName}/${param}", projectName: proj, value: val
+		}
+	*/
 	}
 } // Each conf
