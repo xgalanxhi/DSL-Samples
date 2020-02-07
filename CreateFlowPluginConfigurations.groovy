@@ -46,10 +46,17 @@ PluginConfigs.each { conf ->
 	def pwd= conf.Password
 
 	def ConfigPropertySheet = getProperty(propertyName: "ec_config/configLocation", projectName: proj).value
+	// Does ConfigPropertySheet property sheet exist?
+	def existsConfigPropertySheet = false
+	getProperties(projectName: proj).property.each {
+		if (it.propertyName==ConfigPropertySheet) {existsConfigPropertySheet=true}
+	}
 	// Create a list of existing configurations in this plugin project
 	def ExistingConfigs = []
-	getProperties(propertySheetId: getProperty(ConfigPropertySheet, projectName: proj).propertySheetId).property.each {
-		ExistingConfigs.push(it.name)
+	if (existsConfigPropertySheet) {
+		getProperties(propertySheetId: getProperty(ConfigPropertySheet, projectName: proj).propertySheetId).property.each {
+			ExistingConfigs.push(it.name)
+		}
 	}
 
 	// Create a Transient credential
