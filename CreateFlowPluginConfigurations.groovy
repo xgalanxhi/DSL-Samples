@@ -66,7 +66,7 @@ PluginConfigs.each { conf ->
 	Cred.password = pwd
 	def Creds=[Cred]
 
-	def Params = [ config:confName, credential: Cred.name] + conf.Parameters
+	def Params = [ config:confName, basic_credential:confName ] + conf.Parameters
 	
 	if (! (confName in ExistingConfigs)) {
 		// Create a new configuration by running the plugin create configuration procedure
