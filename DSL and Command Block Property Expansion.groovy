@@ -9,6 +9,7 @@ Currently (version 2002.1), there is not option to suppress expansion of propert
 	"${D}[...]"
 3. Store the DSL in a step property and evaluate the property with expand=false. This example illustrates how to do that using both ec-perl and ec-groovy
 
+RFE: https://cloudbees.atlassian.net/browse/CEV-24448
 
 */
 
@@ -34,16 +35,19 @@ project "DSL Property Expansion", {
 					procedure "Rendered Procedure - ec-groovy shell",{
 						step "Contains Expansion",
 							command: 'echo Hello From $[/myProcedure]'
+						step "Value from evalDsl",
+							command: "echo Value from evalDsl: ${args.val}"
 					}
 				}	
 			'''.stripIndent()
 			command = '''\
 				import com.electriccloud.client.groovy.ElectricFlow
+				import groovy.json.*
 				ElectricFlow ef = new ElectricFlow()
 				def DSL=ef.getProperty(propertyName: "/myStep/DSL", expand: false, jobStepId: System.getenv()["COMMANDER_JOBSTEPID"]).property.value
 				println DSL
-				ef.evalDsl(dsl: DSL)
-				//ef.evalDsl(dsl: ef.getProperty("/projects/DSL Property Expansion/procedures/Test DSL Expansion/steps/DSL as property/DSL"))
+				def Params = JsonOutput.toJson([val: "Value passed in through evalDsl"])
+				ef.evalDsl(dsl: DSL, parameters: Params)
 			'''.stripIndent()
 			shell = "ec-groovy"
 		}
