@@ -12,7 +12,7 @@ project "Default",{
 	procedure 'Dynamic Credentials', {
 		formalParameter 'creds', type: 'credential'
 		step 'Get Credentials',{
-			command = '''\	
+			command = '''\
 				ectool getFullCredential creds --value userName
 				ectool getFullCredential creds --value password
 			'''.stripIndent()
