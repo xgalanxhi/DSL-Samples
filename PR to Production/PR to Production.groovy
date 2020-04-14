@@ -19,18 +19,14 @@ Workflow stubbed out
 13. On approval, Tool kicks off orchestration flow#2 and passes variable $packageName, where packageName is the name of the artifact.
 
 Setup
-- Install on ECSCM-2.3.1.43 (unreleased) and configure
+- Install on ECSCM-2.3.1.43 (unreleased) and create a configuration (see "def repo = " below for the name)
 - Apply this DSL
 	ectool evalDsl --dslFile "PR to Production.groovy"
-- Apply copy WebHook.groovy to ECSMM-git
+- Apply copy WebHook.groovy to ECSCM-git
 	ectool setProperty "/plugins/ECSCM-Git/project/ec_endpoints/githubWebhook/POST/script" --valueFile WebHook.groovy
 - Create a session ID for BitBucket
-- Walk through the trigger dialog to set the session and get the webhook trigger URL
+- Walk through the trigger dialog for "PR to Production::Commit Pipeline" to set the session and get the webhook trigger URL
 - Create a webhook in your bitbucket repo using the URL, commit, create PR, approve PR
-- [Update ProcessWebHookSchedules.perl in ECSCM] - delete me
-- Make sure source control configuration listed in 'def repo' below exists
-- Create a session
-- Create webhook from this session in BitBucket for this Flow instance
 
 Todo
 - Restart for new commits
