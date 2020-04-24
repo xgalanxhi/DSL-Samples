@@ -53,8 +53,16 @@ project "Administration",{
 				def Project=args.Project
 				def Service=args.Service
 				
-				def Location=getProperty("/plugins/${Plugin}/project/ec_config/configLocation").value
-				def ConfigId=getProperty("/plugins/${Plugin}/project/${Location}/${Config}").propertySheetId
+				
+				def ConfigLocation = ["EC-MYSQL":"MYSQL_cfgs","ECSCM":"scm_cfgs"]
+				def Location
+				def ConfigId
+				if (Plugin in ConfigLocation.keySet()) {
+					ConfigId=getProperty("/plugins/${Plugin}/project/${ConfigLocation[Plugin]}/${Config}")?.propertySheetId
+				} else {
+					Location=getProperty("/plugins/${Plugin}/project/ec_config/configLocation")?.value
+					ConfigId=getProperty("/plugins/${Plugin}/project/${Location}/${Config}")?.propertySheetId
+				}
 				
 				breakAclInheritance(propertySheetId: ConfigId)
 				
