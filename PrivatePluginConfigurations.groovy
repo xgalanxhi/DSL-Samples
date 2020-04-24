@@ -1,8 +1,27 @@
 /*
 
-CloudBees CD DSL: Service Catalog Item - Private Plugin Configurations
+CloudBees CD (Flow) DSL: Service Catalog Item - Private Plugin Configurations
 
 By default, if a principals (user, group, project, or service acccount) has access to a plugin configuration, it has access to all of the configurations for that plugin. This self service catalog (SSC) item can be used to restrict access to a limited set of principals. It accomplishes this be breaking inheritance on a selected plugin configuration and adds ACL entries for a set of principals. This SSC can be run multiple times to add more principals ACL entries.
+
+Assuptions
+- /plugins/${Plugin}/project/ec_config/configLocation points to the property sheet containing the configuration property sheets (EC-MYSQL does not have this structure as may other older plugins. RFE filed for EC-MYSQL. ECSCM has a completely different structure as well.)
+
+Known issues
+- Does work for EC-MYSQL and SCM plugins
+
+Manual Steps to handle plugins that fail with this SSC
+1. Ideally, log in as admin. If not, be very careful that you maintain Read-Modify permissions while making changes to to plugin configuration property sheets
+2. Navigate to the configuration property sheet of interest (Platform Home page > Administration > Plugin [ECSCM-<version>/scm_confgs for SCM plugins, EC-MYSQL-<version>/MYSQL_config])
+3. Click into the configuration property sheet
+4. Select "Access Control"
+5. Add Read-Execute access control entries for all of the principals desired
+6. Select "Break Inheritance"
+
+TODO
+- Use getProperty(propertyName: "/plugins/${Plugin}/project/ec_config/configLocation")?.value to narrow list of plugins
+- Add ACL entries and break inheritance for the credential itself
+- Filter out plugin projects in the Project pulldown
 
 */
 
@@ -70,12 +89,14 @@ project "Administration",{
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
 					def Plugins = getPlugins()
+					def PluginKeys = []
 					Plugins.each { Plugin ->
-						def MyPluginKey = Plugin.pluginKey
-						def MyPluginName = Plugin.pluginName
-						if (getCredentials(projectName: MyPluginName)?.credentialName) {
-							options.add(/*value*/ MyPluginKey, /*displayString*/ MyPluginKey)
+						if (getCredentials(projectName: Plugin.pluginName)?.credentialName) {
+							PluginKeys.push(Plugin.pluginKey)
 						}
+					}
+					PluginKeys.unique().each { MyPluginKey ->
+						options.add(/*value*/ MyPluginKey, /*displayString*/ MyPluginKey)
 					}
 					return options
 				'''.stripIndent()
@@ -91,6 +112,9 @@ project "Administration",{
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
+					/*
+						When creating this SCC, the DSL evaluate will fail on the getProperty() below when ${Plugin} returns null. The ternary expression below ensures that ${Plugin} has a value at DSL evaluation time.
+					*/
 					def Plugin= args.parameters[\'Plugin\']?:"EC-Jenkins"
 					def Location=getProperty("/plugins/${Plugin}/project/ec_config/configLocation").value
 					def ConfigsId=getProperty("/plugins/${Plugin}/project/${Location}").propertySheetId
