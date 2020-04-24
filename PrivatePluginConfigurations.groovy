@@ -116,8 +116,15 @@ project "Administration",{
 						When creating this SCC, the DSL evaluate will fail on the getProperty() below when ${Plugin} returns null. The ternary expression below ensures that ${Plugin} has a value at DSL evaluation time.
 					*/
 					def Plugin= args.parameters[\'Plugin\']?:"EC-Jenkins"
-					def Location=getProperty("/plugins/${Plugin}/project/ec_config/configLocation").value
-					def ConfigsId=getProperty("/plugins/${Plugin}/project/${Location}").propertySheetId
+					def ConfigLocation = ["EC-MYSQL":"MYSQL_cfgs","ECSCM":"scm_cfgs"]
+					def Location
+					def ConfigsId
+					if (Plugin in ConfigLocation.keySet()) {
+						ConfigsId=getProperty("/plugins/${Plugin}/project/${ConfigLocation[Plugin]}")?.propertySheetId
+					} else {
+						Location=getProperty("/plugins/${Plugin}/project/ec_config/configLocation")?.value
+						ConfigsId=getProperty("/plugins/${Plugin}/project/${Location}")?.propertySheetId
+					}
 					def Configs=getProperties(propertySheetId: ConfigsId).property
 					Configs.each { Config ->
 						options.add(/*value*/ Config.name, /*displayString*/ Config.name)
