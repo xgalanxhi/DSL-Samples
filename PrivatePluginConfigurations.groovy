@@ -5,23 +5,20 @@ CloudBees CD (Flow) DSL: Service Catalog Item - Private Plugin Configurations
 By default, if a principals (user, group, project, or service acccount) has access to a plugin configuration, it has access to all of the configurations for that plugin. This self service catalog (SSC) item can be used to restrict access to a limited set of principals. It accomplishes this be breaking inheritance on a selected plugin configuration and adds ACL entries for a set of principals. This SSC can be run multiple times to add more principals ACL entries.
 
 Assuptions
-- /plugins/${Plugin}/project/ec_config/configLocation points to the property sheet containing the configuration property sheets (EC-MYSQL does not have this structure as may other older plugins. RFE filed for EC-MYSQL. ECSCM has a completely different structure as well.)
+- /plugins/${Plugin}/project/ec_config/configLocation points to the property sheet containing the configuration property sheets, where this is not true, there is a look up table for exceptions, currently for ECSCM and EC-MYSQL.
 
 Known issues
-- Does work for EC-MYSQL and SCM plugins
 
 Manual Steps to handle plugins that fail with this SSC
 1. Ideally, log in as admin. If not, be very careful that you maintain Read-Modify permissions while making changes to to plugin configuration property sheets
-2. Navigate to the configuration property sheet of interest (Platform Home page > Administration > Plugin [ECSCM-<version>/scm_confgs for SCM plugins, EC-MYSQL-<version>/MYSQL_config])
+2. Navigate to the configuration property sheet of interest (Platform Home page > Administration > Plugin > <top-level configuration property sheet>)
 3. Click into the configuration property sheet
 4. Select "Access Control"
 5. Add Read-Execute access control entries for all of the principals desired
 6. Select "Break Inheritance"
 
 TODO
-- Use getProperty(propertyName: "/plugins/${Plugin}/project/ec_config/configLocation")?.value to narrow list of plugins
 - Add ACL entries and break inheritance for the credential itself
-- Filter out plugin projects in the Project pulldown
 
 */
 
@@ -37,7 +34,9 @@ project "Administration",{
 
 					<htmlData>
 						<![CDATA[
-							By default, if a principals (user, group, project, or service acccount) has access to a plugin configuration, it has access to all of the configurations for that plugin. This self service catalog (SSC) item can be used to restrict access to a limited set of principals. It accomplishes this be breaking inheritance on a selected plugin configuration and adds ACL entries for a set of principals. This SSC can be run multiple times to add more principals ACL entries.
+							<p>By default, if a principals (user, group, project, or service acccount) has access to a plugin configuration, it has access to all of the configurations for that plugin. This self service catalog (SSC) item can be used to restrict access to a limited set of principals. It accomplishes this be breaking inheritance on a selected plugin configuration and adds ACL entries for a set of principals. This SSC can be run multiple times to add more principals ACL entries.
+							
+							<p>Allow time for the Configuration pull down to populate.
 						]]>
 					</htmlData>
 				</xml>
@@ -51,8 +50,7 @@ project "Administration",{
 				def Group=args.Group
 				def User=args.User
 				def Project=args.Project
-				def Service=args.Service
-				
+				def Service=args.Service		
 				
 				def ConfigLocation = ["EC-MYSQL":"MYSQL_cfgs","ECSCM":"scm_cfgs"]
 				def Location
@@ -92,7 +90,7 @@ project "Administration",{
 
 			formalParameter 'Plugin', defaultValue: '', {
 				expansionDeferred = '0'
-				label = null
+				label = "Plugin Name"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
@@ -116,7 +114,7 @@ project "Administration",{
 			formalParameter 'Config', defaultValue: null, {
 				dependsOn = 'Plugin'
 				expansionDeferred = '0'
-				label = null
+				label = "Configuration Name"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
@@ -154,7 +152,7 @@ project "Administration",{
 
 			formalParameter 'Group', defaultValue: null, {
 				expansionDeferred = '0'
-				label = null
+				label = "Group Name"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
@@ -170,7 +168,7 @@ project "Administration",{
 
 			formalParameter 'User', defaultValue: null, {
 				expansionDeferred = '0'
-				label = null
+				label = "User Name"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
@@ -186,7 +184,7 @@ project "Administration",{
 
 			formalParameter 'Project', defaultValue: null, {
 				expansionDeferred = '0'
-				label = null
+				label = "Project Name"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
@@ -202,7 +200,7 @@ project "Administration",{
 			
 			formalParameter 'Service', defaultValue: null, {
 				expansionDeferred = '0'
-				label = null
+				label = "Service Account Name"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
