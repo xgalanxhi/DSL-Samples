@@ -5,9 +5,11 @@ CloudBees CD (Flow) DSL: Service Catalog Item - Private Plugin Configurations
 By default, if a principals (user, group, project, or service acccount) has access to a plugin configuration, it has access to all of the configurations for that plugin. This self service catalog (SSC) item can be used to restrict access to a limited set of principals. It accomplishes this be breaking inheritance on a selected plugin configuration and adds ACL entries for a set of principals. This SSC can be run multiple times to add more principals ACL entries.
 
 Assuptions
-- /plugins/${Plugin}/project/ec_config/configLocation points to the property sheet containing the configuration property sheets, where this is not true, there is a look up table for exceptions, currently for ECSCM and EC-MYSQL.
+- /plugins/${Plugin}/project/ec_config/configLocation points to the property sheet containing the configuration property sheets, where this is not true, there is a look up table for exceptions, currently for ECSCM and EC-MYSQL,
+	def ConfigLocation = ["EC-MYSQL":"MYSQL_cfgs","ECSCM":"scm_cfgs"]
 
 Known issues
+- 
 
 Manual Steps to handle plugins that fail with this SSC
 1. Ideally, log in as admin. If not, be very careful that you maintain Read-Modify permissions while making changes to to plugin configuration property sheets
@@ -19,6 +21,21 @@ Manual Steps to handle plugins that fail with this SSC
 
 TODO
 - Add ACL entries and break inheritance for the credential itself
+
+Running this self-service catalog item from the command line or API
+- As with all SSC items, this one can be run using the runCatalogItem API
+- For example:
+	ectool runCatalogItem \
+		--projectName Administration \
+		--catalogName Administration \
+		--catalogItemName "Private Plugin Configurations" \
+		--actualParameters \
+			Plugin=EC-Jenkins \
+			Config=Jenkins \
+			Group=Developers \
+			User=jbrown \
+			Project="Logging App" \
+			Service=ServiceNow
 
 */
 
