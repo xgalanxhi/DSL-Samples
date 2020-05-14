@@ -4,9 +4,14 @@
 
 CloudBees CD DSL for Unplug: Create table of pipeline metrics
 
+Save the contents of this file to the property /server/unplug/vh, manually, or through ectool:
 ectool setProperty /server/unplug/vh --valueFile UnplugPipelineHealth.groovy
 
 https://<FlowServerURL>/commander/pages/unplug/un_runh?ProjectName=Pipeline%20Health
+
+
+TODO:
+- Trap for empty and non-existent properties, including those passed to this script as arguments
 
 */
 
