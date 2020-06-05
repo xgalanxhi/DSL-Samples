@@ -2,8 +2,12 @@
 
 Procedure that calls workflow which polls ServiceNow record until it reaches 'approved' state
 
-Add PollServiceNow project to ServiceNow plugin project ACL
-Install and promote WorkflowWrapper: https://github.com/electric-cloud/ec-workflow-wrapper/blob/master/out/WorkflowWrapper-1.2.0.jar
+Installation
+1. Install and 
+2. Apply this DSL, e.g., ectool evalDsl --dslFile PollServiceNow.groovy
+3. Make sure that the project PollServiceNow has execute permissions on EC-ServiceNow, default resource pool and its resources, and default workspace.
+
+To use this workflow from a pipeline gate, install promote WorkflowWrapper, https://github.com/electric-cloud/ec-workflow-wrapper/releases/tag/2.0.0 or later to make it possible to call this workflow from a pipeline gate.
 
 */
 
