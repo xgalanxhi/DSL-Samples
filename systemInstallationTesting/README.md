@@ -1,9 +1,21 @@
-The goal of this directory is to write some DSL that would exercise the different part of the system (clustrer on standalone) to test it has been setup properly.
+The goal of this directory is to provide recommendatations and tools for validating a CloudBees CD installation.
 
-# Parts to tests
+# Platform Functionality
 
+1. Server up
+    1. https://cdservername
+    2. ectool getServerStatus
+    3. curl curl -k -X GET "https://admin:changeme@cdservername/rest/v1.0/server/status?block=true&diagnostics=true&serverStateOnly=true&timeout=10" -H "accept: application/json"
 1. Agent access
 1. Repo
-1. Plugin
 1. DOIS
-1 ...
+
+# Integrations
+
+# Security
+1. Ports, SSLv3 only
+1. Trusted agents only
+1. Access controls
+
+# Custom Models
+1. https://github.com/electric-cloud/ec-specs-tool
