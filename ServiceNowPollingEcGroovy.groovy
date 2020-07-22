@@ -34,12 +34,14 @@ project "ServiceNow",{
 				def RunResponse = ef.runProcedure procedureName: 'GetRecord', projectName: '/plugins/EC-ServiceNow/project', 		actualParameters: params
 
 				def JobId = RunResponse.jobId
-				ef.setProperty propertyName: "/myJob/report-urls/Get Status Job", value: "link/jobDetails/jobs/${JobId}"
-				
-				
-				// Not available in ec-groovy
-				//ef.waitForJob jobId: JobId
-				sleep 5000 // 5 seconds
+				ef.setProperty propertyName: "/myJob/report-urls/Get Status Job", value: "link/jobDetails/jobs/${JobId}"	
+
+				// Wait for job
+				def JobStatus
+				while ((JobStatus = (String) ef.getJobStatus(jobId: JobId).status) != "completed") {
+					println "Job status: " + JobStatus
+					sleep 5000 // 5 seconds
+				}
 				
 				def SN_ResponseJson = ef.getProperty(propertyName: "/myJob/ResponseContent", jobId: JobId).property.value
 				def Slurper = new JsonSlurper()

@@ -34,8 +34,9 @@ project "DSL-Samples",{
 			// Create job link to spawned job
 			ef.setProperty propertyName: "/myJob/report-urls/Called procedure job", value: "link/jobDetails/jobs/${JobId}"
 			// Wait for job
-			while ((String) ef.getJobStatus(jobId: JobId).status == "running") {
-				println "Job still running"
+			def JobStatus
+			while ((JobStatus = (String) ef.getJobStatus(jobId: JobId).status) != "completed") {
+				println "Job status: " + JobStatus
 				sleep 2000
 			}
 			println ef.getProperty(propertyName: "/myJob/launchedByUser", jobId: JobId).property.value
