@@ -36,8 +36,8 @@ project "DSL-Samples",{
 				--actualParameter \
 					config="$[Configuration]" \
 					credentialType=password \
-					credential=myectoolcreds \
-				--credential myectoolcreds="$CRED_USERNAME" \
+					credential="$[Configuration]" \
+				--credential "$[Configuration]"="${CRED_USERNAME}" \
 				)
 				CRED_JOBID=$(echo $CRED_RESPONSE | cut -d" " -f3)
 				echo Cred job: $CRED_JOBID
