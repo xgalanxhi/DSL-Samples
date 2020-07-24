@@ -14,6 +14,11 @@ printf 'apassword\n' | \
 		credentialType=password \
 		credential=myectoolcreds \
 	--credential myectoolcreds=auser
+	
+Where the following values should be edited:
+- myectoolcreds (three instances)
+- auser
+- apassword
 
 Note that the password is piped in using the printf command. This can be replaced with a call to a secrets too such as Hashicorp Vault. Done in this way, the password is not exposed.
 
@@ -39,7 +44,7 @@ project "DSL-Samples",{
 					credential="$[Configuration]" \
 				--credential "$[Configuration]"="${CRED_USERNAME}" \
 				)
-				CRED_JOBID=$(echo $CRED_RESPONSE | cut -d" " -f3)
+				CRED_JOBID=$(echo $CRED_RESPONSE | cut -d" " -f3) # Extract JobId from user and password: prompt
 				echo Cred job: $CRED_JOBID
 				ectool setProperty "/myJob/report-urls[CreateConfiguration Job]" --value "link/jobDetails/jobs/${CRED_JOBID}"
 			'''.stripIndent()
