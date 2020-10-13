@@ -2,7 +2,10 @@
 
 CloudBees CD DSL: Deploy only the applications with associated attached pipelines
 
-CloudBees CD release models support deploying applications in bulk. However, it may be that for a particular release run, you only want to run a subset of the applications that are configured for the release definition. This sample project illustrates how to deploy just the applications for which there is an associated attached pipeline run. In this example, the application name and pipeline definition names are the same.
+CloudBees CD release models support deploying applications in bulk. However, it may be that for a particular release
+run, you only want to run a subset of the applications that are configured for the release definition. This sample
+project illustrates how to deploy just the applications for which there is an associated attached pipeline run. In this
+example, the application name and pipeline definition names are the same.
 
 Instructions
 0. Run this DSL (ectool evalDsl --dslFile DeployAttachedPipelineRunApps.dsl, or import and run from the DSLIDE)
