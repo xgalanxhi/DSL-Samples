@@ -117,7 +117,7 @@ project "Deploy Attached", {
                                         ).attachedPipelineRunDetail
                                     def flowRuntimeIds = []
                                     def features = []
-                                    def attachedLink = "<html><ul>"
+                                    def attachedLink = "\\n\\n<html><ul>"
                                     attachedPipelines.each { attachedPipeline ->
                                       def pipelineId = ef.getProperty(
                                             flowRuntimeId: attachedPipeline.flowRuntimeId,
