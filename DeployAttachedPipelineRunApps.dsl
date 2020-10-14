@@ -106,7 +106,7 @@ project "Deploy Attached", {
                                     /*
                                     
                                     - Create stage summary links for the attached pipeline runs
-                                    - Create a comma-sepparted list of attached runtime pipeine IDs as a release pipeline runtime property
+                                    - Create a comma separted list of attached runtime pipeline IDs as a release pipeline runtime property
                                     
                                     */
                                     import com.electriccloud.client.groovy.ElectricFlow
