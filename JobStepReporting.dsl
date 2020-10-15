@@ -67,13 +67,28 @@ project 'Job Step Reporting',{
         '''.stripIndent()
     }
 
+    report 'Host list', {
+        reportObjectTypeName = 'job_step'
+        reportQuery = '''\
+            {
+                "searchCriteria":[],
+                "groupBy":[
+                    {
+                        "field":"hostName"
+                    }
+                ],
+                "aggregationFunctions":[]
+            }
+        '''.stripIndent()
+    }
+
     dashboard 'Resource Utilization', {
         layout = 'FLOW'
         type = 'STANDARD'
 
         reportingFilter 'DateFilter', {
             operator = 'BETWEEN'
-            parameterName = '@timestamp'
+            parameterName = 'startTime'
             required = '1'
             type = 'DATE'
         }
@@ -85,7 +100,7 @@ project 'Job Step Reporting',{
             type = 'CUSTOM'
         }
 
-        widget 'Host in use', {
+        widget 'Hosts in use', {
             description = ''
             attributeDataType = [
                     'yAxis': 'NUMBER',
@@ -95,9 +110,23 @@ project 'Job Step Reporting',{
                     'yAxis': 'distinct_count_hostName',
                     'xAxis': 'startTime_label',
             ]
+            orderIndex = '1'
             reportName = 'Host count by startTime'
-            title = 'Host in use'
+            title = 'Hosts in use'
             visualization = 'VERTICAL_BAR_CHART'
+        }
+        widget 'Host list', {
+            attributeDataType = [
+                    'column1': 'STRING',
+            ]
+            attributePath = [
+                    'column1': 'hostName',
+                    'column1Label': 'Host name',
+            ]
+            orderIndex = '2'
+            reportName = 'Host list'
+            title = 'Host list'
+            visualization = 'TABLE'
         }
     }
 
