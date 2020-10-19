@@ -10,21 +10,25 @@ CloudBees CD DSL: Implement Job Step reporting
 - Creates a self service catalog item to wrap this procedure
 
 Instructions
-0. Apply this DSL (ectool evalDsl --dslFile jobStepReporting.dsl, or import and run in DSLIDE)
-1. Run the self service catalog item "Push reporting data". Choose a small time range such as one day.
+1. If you are using a recent version of CloudBees CD (v10+), set RECENTVERSION=true below
+2. Apply this DSL (ectool evalDsl --dslFile jobStepReporting.dsl, or import and run in DSLIDE)
+3. Run the self service catalog item "Push reporting data". Choose a small time range such as one day.
     The "Dry run" flag is set by default. Press OK and note how many records were found. If this number is
     less than say 10,000, rerun the job with the "Dry Run" option deselected (Use the Run... option from the run Job
     pull down menu).
-3. Navigate to the DevOps Insights Dashboards and select "Resource Utilization" to view the number of hosts being used
+4. Navigate to the DevOps Insights Dashboards and select "Resource Utilization" to view the number of hosts being used
     over time.
 
- */
+*/
+
+def RECENTVERSION=false // Set to true if using 10.0+
+
 reportObjectType "job_step", displayName: "Job Steps"
 /*
 All job step fields
 -------------------
 jobStepId, stepName, alwaysRun, broadcast, combinedStatus, status, condition, createTime, duration, elapsedTime, environmentWaitTime, errorHandling, exclusive, exclusiveMode, exitCode, external, finish, jobId, jobName, lastModifiedBy, licenseReshareWaitTime, licenseWaitTime, liveProcedureStep, logFileName, modifyTime, outcome, owner, parallel, postExitCode, postLogFileName, procedureName, projectName, propertySheetId, releaseExclusive, releaseMode, resourceWaitTime, retries, runTime, runnable, start, status, stepIndex, subprocedure, subproject, timeLimit, totalWaitTime, waitTime, workspaceWaitTime
- */
+*/
 def fields = [
     "resourceName":"STRING",
     "hostName":"STRING",
@@ -82,6 +86,23 @@ project 'Job Step Reporting',{
         '''.stripIndent()
     }
 
+    report 'Resource-Host', {
+        reportObjectTypeName = 'job_step'
+        reportQuery = '''\
+            {
+                "searchCriteria":[],
+                "groupBy":[
+                    {
+                        "field":"hostName"
+                    },{
+                        "field":"resourceName"
+                    }
+                ],
+                "aggregationFunctions":[]
+            }
+        '''.stripIndent()
+    }
+
     dashboard 'Resource Utilization', {
         layout = 'FLOW'
         type = 'STANDARD'
@@ -92,40 +113,59 @@ project 'Job Step Reporting',{
             required = '1'
             type = 'DATE'
         }
-
-        reportingFilter 'Host Name', {
-            operator = 'IN'
-            parameterName = 'hostName'
-            reportObjectTypeName = 'job_step'
-            type = 'CUSTOM'
+        if (RECENTVERSION) {
+            reportingFilter 'Host Name', {
+                operator = 'IN'
+                parameterName = 'hostName'
+                reportObjectTypeName = 'job_step'
+                type = 'CUSTOM'
+            }
+            reportingFilter 'Resource', {
+                operator = 'IN'
+                parameterName = 'resourceName'
+                reportObjectTypeName = 'job_step'
+                type = 'CUSTOM'
+            }
         }
-
         widget 'Hosts in use', {
             description = ''
             attributeDataType = [
-                    'yAxis': 'NUMBER',
-                    'xAxis': 'DATE',
+                'yAxis': 'NUMBER',
+                'xAxis': 'DATE',
             ]
             attributePath = [
-                    'yAxis': 'distinct_count_hostName',
-                    'xAxis': 'startTime_label',
+                'yAxis': 'distinct_count_hostName',
+                'xAxis': 'startTime_label',
             ]
-            orderIndex = '1'
             reportName = 'Host count by startTime'
             title = 'Hosts in use'
             visualization = 'VERTICAL_BAR_CHART'
         }
-        widget 'Host list', {
+        widget 'Hosts', {
             attributeDataType = [
-                    'column1': 'STRING',
+                'column1': 'STRING',
             ]
             attributePath = [
-                    'column1': 'hostName',
-                    'column1Label': 'Host name',
+                'column1': 'hostName',
+                'column1Label': 'Host name',
             ]
-            orderIndex = '2'
             reportName = 'Host list'
-            title = 'Host list'
+            title = 'Hosts'
+            visualization = 'TABLE'
+        }
+        widget 'Resource-host', {
+            attributeDataType = [
+                'column1': 'STRING',
+                'column2': 'STRING',
+            ]
+            attributePath = [
+                'column1': 'resourceName',
+                'column2Label': 'Host name',
+                'column2': 'hostName',
+                'column1Label': 'Resource Name',
+            ]
+            reportName = 'Resource-Host'
+            title = 'Resource-host'
             visualization = 'TABLE'
         }
     }
@@ -212,17 +252,17 @@ project 'Job Step Reporting',{
     catalog 'Resource Utilization', {
         catalogItem 'Push reporting data', {
             description = '''\
-		<xml>
-			<title>This SSC item will push job step data to the reporting database. This data can be use to report on agent host utilization.</title>
-			<htmlData>
-				<![CDATA[
-					Run this self service catalog item to push resource utilization data to the DevOps Insights reporting server.
-					<p>Chose a data range and run; by default, Dry Run is enabled, so no data will be sent to the reporting server but the number of element to be sent will be displayed. If this number is less that 10000, rerun the job with Dry Run disabled (use the pull down menu next to the run button on the Job page).</p>
-					<p>Once there is data in the reporting server, the "Resource Utilization" dashboard should have content.</p>
-				]]>
-			</htmlData>
-		</xml>
-	'''.stripIndent()
+                <xml>
+                    <title>This SSC item will push job step data to the reporting database. This data can be use to report on agent host utilization.</title>
+                    <htmlData>
+                        <![CDATA[
+                            Run this self service catalog item to push resource utilization data to the DevOps Insights reporting server.
+                            <p>Chose a data range and run; by default, Dry Run is enabled, so no data will be sent to the reporting server but the number of element to be sent will be displayed. If this number is less that 10000, rerun the job with Dry Run disabled (use the pull down menu next to the run button on the Job page).</p>
+                            <p>Once there is data in the reporting server, the "Resource Utilization" dashboard should have content.</p>
+                        ]]>
+                    </htmlData>
+                </xml>
+	        '''.stripIndent()
             buttonLabel = 'Execute'
             iconUrl = 'icon-resource.svg'
             subprocedure = 'Push job step reporting data'
