@@ -2,7 +2,7 @@
 
 CloudBees CD DSL: Implement Job Step reporting
 
-- Creates a new report object type "job_step"
+- Creates a new report object type "jobstep"
 - Creates a report to aggregate unique hostnames vs. start times
 - Creates a dashboard with a widget that displays the number of unique hosts vs. start times
 - Creates a procedure that finds all job steps with an assigned resource in a user-provided time range and pushes these
@@ -23,7 +23,7 @@ Instructions
 
 def RECENTVERSION=false // Set to true if using 10.0+
 
-reportObjectType "job_step", displayName: "Job Steps"
+reportObjectType "jobstep", displayName: "Job Steps"
 /*
 All job step fields
 -------------------
@@ -46,13 +46,13 @@ fields.each { field, type ->
         description, enumerationValues, required, type:
             <BOOLEAN|CONSTANT|DATE|DATETIME|DURATION|NUMBER|PERCENT|STRING>
      */
-    reportObjectAttribute reportObjectTypeName: "job_step", field, type: type
+    reportObjectAttribute reportObjectTypeName: "jobstep", field, type: type
 }
 
 project 'Job Step Reporting',{
 
     report 'Host count by startTime', {
-        reportObjectTypeName = 'job_step'
+        reportObjectTypeName = 'jobstep'
         reportQuery = '''\
             {
                 "searchCriteria":[],
@@ -72,7 +72,7 @@ project 'Job Step Reporting',{
     }
 
     report 'Host list', {
-        reportObjectTypeName = 'job_step'
+        reportObjectTypeName = 'jobstep'
         reportQuery = '''\
             {
                 "searchCriteria":[],
@@ -87,7 +87,7 @@ project 'Job Step Reporting',{
     }
 
     report 'Resource-Host', {
-        reportObjectTypeName = 'job_step'
+        reportObjectTypeName = 'jobstep'
         reportQuery = '''\
             {
                 "searchCriteria":[],
@@ -117,13 +117,13 @@ project 'Job Step Reporting',{
             reportingFilter 'Host Name', {
                 operator = 'IN'
                 parameterName = 'hostName'
-                reportObjectTypeName = 'job_step'
+                reportObjectTypeName = 'jobstep'
                 type = 'CUSTOM'
             }
             reportingFilter 'Resource', {
                 operator = 'IN'
                 parameterName = 'resourceName'
-                reportObjectTypeName = 'job_step'
+                reportObjectTypeName = 'jobstep'
                 type = 'CUSTOM'
             }
         }
@@ -242,7 +242,7 @@ project 'Job Step Reporting',{
                     if (it.jobStep.finish) payload << [endTime: it.jobStep.finish]
                     ef.sendReportingData(
                         payload: JsonOutput.toJson(payload),
-                        reportObjectTypeName: 'job_step'
+                        reportObjectTypeName: 'jobstep'
                     )
                     ef.setProperty(propertyName: "summary", value: "Sent ${index+1} of ${result.object.size()} records")
                 }         
