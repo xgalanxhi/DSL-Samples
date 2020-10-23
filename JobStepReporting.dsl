@@ -19,6 +19,44 @@ Instructions
 4. Navigate to the DevOps Insights Dashboards and select "Resource Utilization" to view the number of hosts being used
     over time.
 
+To generate TAB delimited output for the "Host in use" and "Hosts" reports, run the following DSL from the DSLIDE:
+
+----------------------------
+// "Host in use" widget
+def headers = [
+  'startTime_count',
+  'total',
+  'startTime_label','startTime',
+  'distinct_count_hostName'
+]
+def tab = headers.join('\t') + '\n'
+runReport(projectName: "Job Step Reporting", widgetName: "Hosts in use", reportName: "Host count by startTime", dashboardName: "Resource Utilization").asNode()[0].each { row ->
+  headers.each { field ->
+    tab += row[field]
+    tab += '\t'
+  }
+  tab += '\n'
+}
+tab
+
+---------------------------
+// "Hosts" widget
+def headers = [
+"hostName_count",
+    "hostName",
+  ]
+def tab = headers.join('\t') + '\n'
+
+
+runReport(projectName: "Job Step Reporting", widgetName: "Hosts", reportName: "Host list", dashboardName: "Resource Utilization").asNode()[0].each { row ->
+  headers.each { field ->
+    tab += row[field]
+    tab += '\t'
+  }
+  tab += '\n'
+}
+tab
+
 */
 
 def RECENTVERSION=false // Set to true if using 10.0+
