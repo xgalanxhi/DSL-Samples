@@ -73,14 +73,12 @@ project "Report Data",{
                         DashName : args.DashName,
                         WidName : args.WidName
                     ]
-                ).jobId
-                property "/myUser/ReportJob", value: RunId
+                )
+                return RunId
             '''.stripIndent()
             endTargetJson = '''\
                 {
-                  "source": "property",
-                  "object": "job",
-                  "objectId": "$[/myUser/ReportJob]"
+                  "object": "job"
                 }
             '''.stripIndent()
             iconUrl = 'icon-catalog-item.svg'
