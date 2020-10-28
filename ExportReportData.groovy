@@ -2,51 +2,28 @@
 
 CloudBees CD DSL: Generate reporting data from a widget definition
 
-Currently implemented as a procedure requiring the user to manually enter the project name,
-dashboard name, and the widget name. The data is written to a tab-delimited file and this
-file is accessible from the job page as a link.
+Create a self-service catalog item that can be used to generate a tab-delimited file from a DevOps Insight
+widget (report).
 
-
-TODO: don't use projectName as a formal parameter to avoid conflicts with intrinsic
-TODO: Wrap the procedure in an SSC with pull down menus for project, dashboard and widget
-
-DSL version:
-def widget = [
-  projectName: "Electric Cloud",
-  dashboardName:"Application Deployments",
-  widgetName:"TopAppsByDeployments"
-]
-widget << [reportName:getWidget(widget).reportName]
-def ReportData = runReport(widget).asNode()[0]
-def headers = []
-ReportData[0].fieldNames().each {headers.push it}
-def tab = headers.join('\t') + '\n'
-ReportData.each { row ->
- headers.each { field ->
-    tab += row[field]
-    tab += '\t'
-  }
-  tab += '\n'
-}
-tab
-
+TODO: Documentation
+TODO: Add filtering operations
 
  */
 
 project "Report Data",{
     procedure "Export Report Data",{
-            formalParameter "projectName", required: true
-        formalParameter "dashboardName", required: true
-        formalParameter "widgetName", required: true
+        formalParameter "ProjName", required: true
+        formalParameter "DashName", required: true
+        formalParameter "WidName", required: true
 
         step "Run", shell: "ec-groovy", command: '''\
             import groovy.json.JsonOutput
             import com.electriccloud.client.groovy.ElectricFlow
             ElectricFlow ef = new ElectricFlow()
             def widget = [
-              projectName: '$[/myJob/actualParameters/projectName]',
-              dashboardName:'$[dashboardName]',
-              widgetName:'$[widgetName]'
+              projectName: '$[ProjName]',
+              dashboardName:'$[DashName]',
+              widgetName:'$[WidName]'
             ]
             widget << [reportName:ef.getWidget(widget).widget.reportName]
             def ReportData = ef.runReport(widget).result
@@ -70,5 +47,94 @@ project "Report Data",{
                 value: "/commander/jobSteps/$[/myJobStep/jobStepId]/${fileName}"
             )         
         '''.stripIndent()
+    }
+
+    catalog 'Reports', {
+        catalogItem 'Export Report Data', {
+            description = '''\
+                <xml>
+                  <title>
+                    
+                  </title>
+                
+                  <htmlData>
+                    <![CDATA[
+                      
+                    ]]>
+                  </htmlData>
+                </xml>
+            '''.stripIndent()
+            buttonLabel = 'Generate'
+            dslParamForm = ''
+            dslString = '''\
+                def RunId = runProcedure(procedureName: "Export Report Data", projectName: "Report Data",
+                    actualParameter: [
+                        ProjName : args.ProjName,
+                        DashName : args.DashName,
+                        WidName : args.WidName
+                    ]
+                ).jobId
+                property "/myUser/ReportJob", value: RunId
+            '''.stripIndent()
+            endTargetJson = '''\
+                {
+                  "source": "property",
+                  "object": "job",
+                  "objectId": "$[/myUser/ReportJob]"
+                }
+            '''.stripIndent()
+            iconUrl = 'icon-catalog-item.svg'
+            useFormalParameter = '1'
+
+            formalParameter 'ProjName', {
+                expansionDeferred = '0'
+                label = 'Project Name'
+                orderIndex = '1'
+                required = '1'
+                type = 'project'
+            }
+
+            formalParameter 'DashName', {
+                dependsOn = 'ProjName'
+                expansionDeferred = '0'
+                label = 'Dashboard Name'
+                optionsDsl = '''\
+                    import com.electriccloud.domain.FormalParameterOptionsResult
+                    
+                    def options = new FormalParameterOptionsResult()
+                    
+                    getDashboards(projectName: args.parameters['ProjName']).each { Dash ->
+                      options.add(Dash.dashboardName, Dash.dashboardName)
+                    }
+                    
+                    return options
+                '''.stripIndent()
+                orderIndex = '2'
+                required = '1'
+                type = 'select'
+            }
+
+            formalParameter 'WidName', {
+                dependsOn = 'DashName'
+                expansionDeferred = '0'
+                label = 'Widget Name'
+                optionsDsl = '''\
+                    import com.electriccloud.domain.FormalParameterOptionsResult
+                    
+                    def options = new FormalParameterOptionsResult()
+                    def DashName = args.parameters['DashName']?:"Application Deployments"
+                    def ProjName = args.parameters['ProjName']?:"Electric Cloud"
+                    
+                    getWidgets(ProjName, dashboardName: DashName).each { Wid ->
+                      options.add(Wid.widgetName, Wid.widgetName)
+                    }
+                    
+                    return options
+                '''.stripIndent()
+                orderIndex = '3'
+                required = '1'
+                type = 'select'
+            }
+        }
     }
 }
