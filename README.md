@@ -11,3 +11,4 @@ Dynamic credentials are those that are entered as parameters at runtime and only
 - ![Pipeline run dialog](/images/Dynamic%20Credentials/Pipeline%20run%20dialog.png)
 - ![Pipeline runtime](/images/Dynamic%20Credentials/Pipeline%20runtime.png)
 - ![Job details](/images/Dynamic%20Credentials/Job%20details.png)
+- ![Job step logfile](/images/Dynamic%20Credentials/Job%20step%20logfile.png)
