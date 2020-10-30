@@ -16,3 +16,13 @@ Dynamic credentials are those that are entered as parameters at runtime and only
 - ![Pipeline runtime](/images/Dynamic%20Credentials/Pipeline%20runtime.png)
 - ![Job details](/images/Dynamic%20Credentials/Job%20details.png)
 - ![Job step logfile](/images/Dynamic%20Credentials/Job%20step%20logfile.png)
+
+## [Export Report Data](ExportReportData.groovy)
+Create a self-service catalog item that can be used to generate a tab-delimited file from a DevOps Insight
+widget (report).
+- ![Application Dashboard Widget](/images/Report%20Data/ApplicationDeploymentWidget.png)
+- ![Self-service catalog entry](/images/Report%20Data/SelfserviceCatalogEntry.png)
+- ![Job Details with link](/images/Report%20Data/JobDetails.png)
+- ![Job Details with link](/images/Report%20Data/JobDetails.png)
+- ![Raw TAB data](/images/Report%20Data/RawTabData.png)
+- ![In MS Excel](/images/Report%20Data/Excel.png)
