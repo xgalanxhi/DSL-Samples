@@ -7,7 +7,7 @@ Dynamic credentials are those that are entered as parameters at runtime and only
  run. These can be used as an alternative to static credentials which are saved to a project. The ideas is that a user
  can be prompted for credentials when they are needed for the execution to pipeline tasks.
 
-![Pipeline Definition](/images/Dynamic Credentials/Pipeline definition.png)
-![Pipeline run dialog](/images/Dynamic Credentials/Pipeline run dialog.png)
-![Pipeline runtime](/images/Dynamic Credentials/Pipeline runtime.png)
-![Job details](/images/Dynamic Credentials/Job details.png)
+- ![Pipeline Definition](/images/Dynamic%20Credentials/Pipeline%20definition.png)
+- ![Pipeline run dialog](/images/Dynamic%20Credentials/Pipeline%20run%20dialog.png)
+- ![Pipeline runtime](/images/Dynamic%20Credentials/Pipeline%20runtime.png)
+- ![Job details](/images/Dynamic%20Credentials/Job details.png)
