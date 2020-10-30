@@ -23,6 +23,5 @@ widget (report).
 - ![Application Dashboard Widget](/images/Report%20Data/ApplicationDeploymentWidget.png)
 - ![Self-service catalog entry](/images/Report%20Data/SelfserviceCatalogEntry.png)
 - ![Job Details with link](/images/Report%20Data/JobDetails.png)
-- ![Job Details with link](/images/Report%20Data/JobDetails.png)
 - ![Raw TAB data](/images/Report%20Data/RawTabData.png)
 - ![In MS Excel](/images/Report%20Data/Excel.png)
