@@ -8,16 +8,20 @@ Dynamic credentials are those that are entered at runtime and only last the dura
 
 def Credentials = "creds"
 
-project "Default",{
+project "Credential Examples",{
 	procedure 'Dynamic Credentials', {
-		formalParameter 'creds', type: 'credential'
-		step 'Get Credentials',{
-			command = '''\
-				ectool getFullCredential creds --value userName
-				ectool getFullCredential creds --value password
-			'''.stripIndent()
-			attachParameter formalParameterName : "/projects/${projectName}/procedures/${procedureName}/formalParameters/${Credentials}"
+		formalParameter Credentials, type: 'credential'
+		step 'Use Credentials',{
+			command = """\
+				user=\$(ectool getFullCredential ${Credentials} --value userName)
+				pass=\$(ectool getFullCredential ${Credentials} --value password)
+				
+				# Sample command below to show successful passing of the credentials. Make sure
+				# not to echo out the hidden ${user} and ${pass} values in you work.
+				echo "User: \${user}, Password: \${pass}"
+			""".stripIndent()
+			attachParameter formalParameterName : Credentials
 		}
-	property "ec_customEditorData/parameters/creds", formType: "standard"
+	property "ec_customEditorData/parameters/${Credentials}", formType: "standard"
   }
 }
