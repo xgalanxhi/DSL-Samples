@@ -10,12 +10,16 @@ Instruction
 3. Start pipeline as user A
 4. Approve as user B
 
+TODO
+[] Add stage to run without manual approval
+
 */
 
 def SessionPassword = "changeme"
 
 user "A", password: "changeme", sessionPassword: SessionPassword
 user "B", password: "changeme", sessionPassword: SessionPassword
+user "C", password: "changeme", sessionPassword: SessionPassword
 
 project "Separation of duties",{
 	acl {
@@ -25,6 +29,12 @@ project "Separation of duties",{
 			executePrivilege = 'allow'
 		}
 	}
+
+	procedure "Change ownership",{
+		step "Change owner",
+			command: 'echo change owner...' 
+	}
+
 	pipeline 'Staged access', {
 		stage 'A', {
 			acl {
@@ -37,8 +47,18 @@ project "Separation of duties",{
 				}
 				
 			}
+			
+			task 'echo', {
+				actualParameter = [
+					'commandToRun': 'echo test',
+				]
+				subpluginKey = 'EC-Core'
+				subprocedure = 'RunCommand'
+				taskType = 'COMMAND'
+			}
+
 			gate 'POST', {
-				task 'B', {
+				task 'B approval', {
 					gateType = 'POST'
 					notificationEnabled = '1'
 					notificationTemplate = 'ec_default_gate_task_notification_template'
@@ -50,14 +70,6 @@ project "Separation of duties",{
 				}
 			}
 
-			task 'echo', {
-				actualParameter = [
-					'commandToRun': 'echo test',
-				]
-				subpluginKey = 'EC-Core'
-				subprocedure = 'RunCommand'
-				taskType = 'COMMAND'
-			}
 		}
 
 		stage 'B', {
@@ -79,6 +91,38 @@ project "Separation of duties",{
 				subprocedure = 'RunCommand'
 				taskType = 'COMMAND'
 			}
+
+			gate 'POST', {
+				task 'Change ownership to C', {
+					gateType = 'POST'
+					taskType = 'PROCEDURE'
+					subprocedure = 'Change ownership'
+					subproject = projectName
+				}
+			}
+			
 		}
+		
+		stage 'C', {
+			acl {
+				inheriting = '0'
+				aclEntry 'group', principalName: 'Everyone', {
+					readPrivilege = 'allow'
+				}
+				aclEntry 'user', principalName: 'C', {
+					executePrivilege = 'allow'
+				}
+
+			}
+			task 'echo', {
+				actualParameter = [
+					'commandToRun': 'echo',
+				]
+				subpluginKey = 'EC-Core'
+				subprocedure = 'RunCommand'
+				taskType = 'COMMAND'
+			}
+		}
+		
 	}
 }

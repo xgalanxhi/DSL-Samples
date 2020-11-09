@@ -1,6 +1,6 @@
 # Jenkins CD plugin to kick off CloudBees CD pipeline
 
-This example illustrates how to start CloudBees CD pipelines from Jenkins using the [Jenkins CloudBees CD plugin](https://plugins.jenkins.io/electricflow/) and how to pass parameters into the CloudBees CD pipeline. This example is made up of two files, [CDPipeline.groovy] which is used to build the sample pipeline in CloudBees CD and [Jenkinsfile.groovy] which implments the Jenkins pipeline that kicks off the CloudBees CD pipeline.
+This example illustrates how to start CloudBees CD pipelines from Jenkins using the [Jenkins CloudBees CD plugin](https://plugins.jenkins.io/electricflow/) and how to pass parameters into the CloudBees CD pipeline. This example is made up of two files, [CDPipeline.groovy](CDPipeline.groovy) which is used to build the sample pipeline in CloudBees CD and [Jenkinsfile.groovy](Jenkinsfile.groovy) which implments the Jenkins pipeline that kicks off the CloudBees CD pipeline.
 
 ## Instructions
 
