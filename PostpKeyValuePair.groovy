@@ -9,6 +9,13 @@ properties. These key value pairs are identified by finding = and : separator sy
 For the procedure, the properties are stored the job property sheet
 For the pipeline, the properties are stored to the stage summary
 
+It is also possible to use the shell to save properties using ectool. Pipe the output of the command to the
+following to do something similar to what postp is doing:
+
+	while read -r k v;do if [ -n "$v" ]; then ectool setProperty /myJob/$(echo $k|xargs) --value $(echo $v|xargs); fi;done
+	
+BTW, the xargs is used here to trim white spaces off the property name and the value
+
 */
 
 def KeyValuePP = '''\
@@ -24,6 +31,7 @@ def KeyValuePP = '''\
 	);
 '''.stripIndent()
 
+// Simulate output from a command
 def CommandBlock = '''\
 	cat << EOF
 	testresult: PASS
