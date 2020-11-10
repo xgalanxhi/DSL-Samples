@@ -14,7 +14,8 @@ following to do something similar to what postp is doing:
 
 	while read -r k v;do if [ -n "$v" ]; then ectool setProperty /myJob/$(echo $k|xargs) --value $(echo $v|xargs); fi;done
 	
-BTW, the xargs is used here to trim white spaces off the property name and the value
+BTW, the xargs is used here to trim white spaces off the property name and the value. The if-then clause is used to skip
+lines that don't contain : or =.
 
 */
 
@@ -37,6 +38,7 @@ def CommandBlock = '''\
 	testresult: PASS
 	coverage = 95%
 	testname : Total System Integration
+	End of test results
 	EOF
 '''.stripIndent()
 
