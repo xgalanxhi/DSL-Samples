@@ -52,7 +52,7 @@ project "ServiceNow",{
 				return ApprovalStatus
 			}
 			
-			while (GetApprovalStatus() != "approved") {
+			while (GetApprovalStatus() != '$[TargetState]') {
 				sleep PollingInterval * 1000
 			}
 			
