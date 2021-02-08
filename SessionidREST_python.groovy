@@ -3,8 +3,8 @@
 CloudBees CD DSL: REST API access using Session ID
 
 Currently the CloudBees CD has API bindings for Perl and Groovy. API calls can be made to CloudBees CD from
-procedure steps using REST. Authentication for the call can be made using the job step session ID. The
-procedure example below illustrate how to use the sesssion ID to make calls from curl and Python.
+procedure steps using REST. Authentication for the calls can be made using the job step session ID. The
+procedure example below illustrates how to use the sesssion ID to make calls from curl and Python.
 
 */
 
@@ -15,6 +15,7 @@ project "DSL-Samples", {
 			command : 'curl -k -H "sessionid: $COMMANDER_SESSIONID" https://flow/rest/v1.0/projects'
 		step "python", shell: "python '{0}'", command: '''\
 			import requests
+			import os
 
 			resp = requests.get('https://flow/rest/v1.0/projects', headers={'sessionid':os.environ.get('COMMANDER_SESSIONID')}, verify=False)
 			if resp.status_code != 200:
@@ -23,5 +24,5 @@ project "DSL-Samples", {
 			else:
 				print(resp.json())
 		'''.stripIndent()
-	}
+		}
 }
