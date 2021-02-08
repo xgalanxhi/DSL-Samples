@@ -25,7 +25,15 @@ def ServiceAccountName = "My Git account"
 def CdHostName = getProperty(propertyName: "/server/hostName").value
 
 serviceAccount ServiceAccountName
-def SessionId = createSession(serviceAccountName: ServiceAccountName, expirationDate: "2020-12-31").sessionId
+def SessionId 
+def mySessions = getSessions(serviceAccountName: ServiceAccountName)
+
+if(mySessions.isEmpty()){
+	SessionId = createSession(serviceAccountName: ServiceAccountName, expirationDate: "2021-12-31").sessionId
+} else {
+	SessionId = mySessions[0].sessionId
+}
+
 def WebHookUrl = "https://${CdHostName}/commander/link/webhookServerRequest?operationId=githubWebhook&pluginConfigName=${GitConfig}&sessionId=${SessionId}"
 
 project 'Triggers', {
