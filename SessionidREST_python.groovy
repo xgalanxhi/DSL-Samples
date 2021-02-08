@@ -16,13 +16,26 @@ project "DSL-Samples", {
 		step "python", shell: "python '{0}'", command: '''\
 			import requests
 			import os
-
-			resp = requests.get('https://flow/rest/v1.0/projects', headers={'sessionid':os.environ.get('COMMANDER_SESSIONID')}, verify=False)
-			if resp.status_code != 200:
-				# Error condition
-				print(resp.status_code)
-			else:
-				print(resp.json())
+			
+			def getProjects():
+				resp = requests.get('https://flow/rest/v1.0/projects', headers={'sessionid':os.environ.get('COMMANDER_SESSIONID')}, verify=False)
+				if resp.status_code != 200:
+					# Error condition
+					return resp.status_code
+				else:
+					return resp.json()
+					
+			def getProject(projectName):
+				resp = requests.get('https://flow/rest/v1.0/projects/' + projectName, headers={'sessionid':os.environ.get('COMMANDER_SESSIONID')}, verify=False, )
+				if resp.status_code != 200:
+					# Error condition
+					return resp.status_code
+				else:
+					return resp.json()
+			
+			print getProjects()
+			print getProject("Default")
+			
 		'''.stripIndent()
 		}
 }
