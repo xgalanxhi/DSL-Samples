@@ -64,20 +64,12 @@ project "Deploy Selected", {
                     task 'Deploy selected applications', {
                         taskType = 'DEPLOYER'
                         deployerExpression = '''\
-                            var items = [];
-                            var props = api.getActualParameters(
-                                {flowRuntimeId: myPipelineRuntime.flowRuntimeId}
-                                ).actualParameter;
-                            for(i=0; i<props.length; i++){
-                                if(props[i].value=='true') {
-                                    var appName = props[i].actualParameterName;
-                                    for(j=0;j<itemList.length;j++){
-                                        var item= itemList[j];
-                                        if (appName == item) items.push(item)
-                                    }
-                                }
-                            }
-                            return items;
+							var items = [];
+							for(Apps=0;Apps<itemList.length;Apps++){
+								var item= itemList[Apps];
+								if (myPipelineRuntime.actualParameters[item] == 'true') items.push(item)
+							}
+							return items;
                         '''.stripIndent()
                     }
                 }
