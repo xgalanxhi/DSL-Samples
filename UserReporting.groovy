@@ -99,7 +99,7 @@ project "User Reporting",{
 	}
 
 
-	procedure "Push user login data",{
+	procedure "Push login data",{
 		step "Get and push", shell: "ec-groovy", command: '''\
 			import groovy.json.JsonOutput
 			import com.electriccloud.client.groovy.ElectricFlow
