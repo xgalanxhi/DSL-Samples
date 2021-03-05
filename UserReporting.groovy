@@ -77,10 +77,29 @@ project "User Reporting",{
 			title = 'Logins'
 			visualization = 'VERTICAL_BAR_CHART'
 		}
+		widget 'User List', {
+			attributeDataType = [
+			  'column1': 'STRING',
+			  'column3': 'NUMBER',
+			  'column2': 'DATE',
+			]
+			attributePath = [
+			  'column1': 'userName',
+			  'column2Label': 'Last Login',
+			  'column3': 'lastLoginTime_count',
+			  'column2': 'lastLoginTime_label',
+			  'column3Label': 'Number of logins',
+			  'column1Label': 'User',
+			]
+			dashboardName = 'Users'
+			reportName = 'User Login'
+			title = 'User List'
+			visualization = 'TABLE'
+		}
 	}
 
 
-	procedure "Push login data",{
+	procedure "Push user login data",{
 		step "Get and push", shell: "ec-groovy", command: '''\
 			import groovy.json.JsonOutput
 			import com.electriccloud.client.groovy.ElectricFlow
