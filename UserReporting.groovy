@@ -23,6 +23,30 @@ reportObjectType "user",{
 		displayName: "Last login time",
 		required: true,
 		type: "DATETIME"
+	reportObjectAttribute "createTime", 
+		displayName: "Create Time",
+		required: true,
+		type: "DATETIME"
+	reportObjectAttribute "email", 
+		displayName: "Email",
+		required: false,
+		type: "STRING"
+	reportObjectAttribute "fullUserName", 
+		displayName: "Full Name",
+		required: false,
+		type: "STRING"
+	reportObjectAttribute "providerName", 
+		displayName: "Directory Provider Name",
+		required: false,
+		type: "STRING"
+	reportObjectAttribute "registered", 
+		displayName: "Registered",
+		required: false,
+		type: "STRING"
+	reportObjectAttribute "groupName", 
+		displayName: "Group Name",
+		required: false,
+		type: "STRING"
 }
 
 project "User Reporting",{
@@ -127,6 +151,12 @@ project "User Reporting",{
 						def payload = [
 							userName: U.userName,
 							lastLoginTime: U.lastLoginTime,
+							createTime: U.createTime,
+							email: U.email?:"",
+							fullUserName: U.fullUserName?:"",
+							providerName: U.providerName?:"",
+							registered: U.registered?:"",
+							groupName: U.groupName?.join(",")?:""
 						]
 						ef.sendReportingData(
 							reportObjectTypeName:"user",
