@@ -6,6 +6,9 @@ CloudBees SDA ARO DSL: Use of credentials in a pipeline task
 
 project "DSL-Samples", {
 	credential 'credname', userName: 'usern', password: "passxxx", credentialType: 'LOCAL'
+	procedure "The procedure",{
+		step "The step", command: "echo", credentialName: 'credname'
+	}
 	pipeline "The pipeline", {
 		stage "The stage",{
 			task "The task",{
@@ -20,6 +23,11 @@ project "DSL-Samples", {
 					'''.stripIndent(),
 				]
 				attachCredential credentialName: "credname"
+			}
+			task "Run the procedure",{
+				subproject = projectName
+				taskType = 'PROCEDURE'
+				subprocedure = 'The procedure'
 			}
 		}
 	}
