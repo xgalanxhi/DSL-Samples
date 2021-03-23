@@ -15,7 +15,7 @@ What this DSL does
 - Creates a Release
 - Runs the pipelines
 - Attaches them to the release
-- Start the release and runs it
+- Starts the release and runs it
 - The release is configured so that the QA stage will only start once the attached pipelines have completed
 
 */
