@@ -7,10 +7,10 @@ database for are pipeline runtime events once the parameters have been set.
 
 ## Instructions
 1. Apply the DSL file CreateRunRelease.groovy
-	ectool evalDsl --dslFile CreateRunRelease.groovy
+	`ectool evalDsl --dslFile CreateRunRelease.groovy`
 	or load this file into the DSLIDE and run it
 1. Apply the DSL file CreateReport.groovy
-	ectool evalDsl --dslFile CreateReport.groovy
+	`ectool evalDsl --dslFile CreateReport.groovy`
 	or load this file into the DSLIDE and run it
 1. Examine the Dashboard DSL-Samples :: Release SubPipeline Metrics
 
