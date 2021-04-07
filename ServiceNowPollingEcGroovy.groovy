@@ -11,10 +11,10 @@ TODO
 
 project "ServiceNow",{
 	procedure "Poll for target state",{
-		formalParameter "TargetState", required: true, description: "Change request desired end state"
+		formalParameter "TargetState", required: true, description: "Change request desired end state", type: 'textarea'
 		formalParameter "Configuration", required: true, description: "EC-ServiceNow configuration"
 		formalParameter "PollingInterval", required: false, defaultValue: "60", description: "Polling Interval in seconds"
-		formalParameter "RecordID", required: true, description: "Record to be queried"
+		formalParameter "RecordID", required: true, description: "Record to be queried", type: 'textarea'
 		
 		step 'Get State', shell: 'ec-groovy', command: '''\
 			import groovy.json.JsonSlurper
