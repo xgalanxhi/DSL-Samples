@@ -19,4 +19,11 @@ project "DSL-Samples", {
 				ectool setProperty summary "$DSLSAMPLE_VARIABLE"
 			'''.stripIndent()
 	}
+	procedure "Resource Environment Variables", {
+		resourceName = "local"
+		step "Create and set the environment variable",
+			command: 'ectool setProperty "ec_environment_variables/MY_ENV_VAR" --value "PropertyValue123" --resourceName "$[/myResource]" '
+		step "Echo environment variable value",
+			command : 'echo $MY_ENV_VAR'
+	}	
 }
