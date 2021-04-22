@@ -17,7 +17,7 @@ project "DSL-Samples",{
 			}
 			gate 'POST', {
 				task 'Verify Comment Exists', {
-					gateCondition = '$[/javascript myPipelineRuntime.stages["Stage 1"].tasks["Manual Task"]]'
+					gateCondition = '$[/myPipelineRuntime/stages[Stage 1]/tasks[Manual Task]/evidence]'
 					gateType = 'POST'
 					taskType = 'CONDITIONAL'
 				}
