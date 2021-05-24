@@ -9,7 +9,7 @@ the pipeline or release from Jenkins.
 ## Instructions
 
 1. Install the [Jenkins CloudBees CD plugin](https://plugins.jenkins.io/electricflow/) into your Jenkins Controller (fka "Master")
-1. Create a configruation in Jenkins called "CD"
+1. Create a CloudBees CD configruation in Jenkins called "CD"
 1. Apply [CDPipeline.groovy](CDPipeline.groovy) and [CDRelease.groovy](CDRelease.groovy)
 through CloudBees CD DSLIDE or command line
 1. Create a Jenkins pipeline jobs with each of the Jenkinsfile,
