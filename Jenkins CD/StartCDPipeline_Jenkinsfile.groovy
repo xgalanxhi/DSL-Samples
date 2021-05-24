@@ -1,3 +1,9 @@
+/*
+
+Start a CloudBees CD Pipeline from Jenkins using https://plugins.jenkins.io/electricflow/
+
+*/
+
 import groovy.json.JsonOutput
 
 def CDPipeline = "Jenkins initiated"
