@@ -6,13 +6,9 @@ pass in parameters. Each example is made up of two files, the CD DSL and "Jenkin
 DSL is used to create the pipeline or release model. The Jenkinsfile is used to kick off
 the pipeline or release from Jenkins.
 
-[CDPipeline.groovy](CDPipeline.groovy) which is used to build the sample pipeline in
-CloudBees CD and [Jenkinsfile.groovy](Jenkinsfile.groovy) which implments the Jenkins
- pipeline that kicks off the CloudBees CD pipeline.
-
 ## Instructions
 
-1. Install the Jenkins CloudBees CD plugin into your Jenkins Controller (fka "Master")
+1. Install the [Jenkins CloudBees CD plugin](https://plugins.jenkins.io/electricflow/) into your Jenkins Controller (fka "Master")
 1. Create a configruation in Jenkins called "CD"
 1. Apply [CDPipeline.groovy](CDPipeline.groovy) and [CDRelease.groovy](CDRelease.groovy)
 through CloudBees CD DSLIDE or command line
