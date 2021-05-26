@@ -6,6 +6,11 @@ Currently the CloudBees CD has API bindings for Perl and Groovy. API calls can b
 procedure steps using REST. Authentication for the calls can be made using the job step session ID. The
 procedure example below illustrates how to use the sesssion ID to make calls from curl and Python.
 
+Instructions
+1. Replace "flow" in the URLs with your CloudBees CD hostname
+2. Apply this DSL through the DSL IDE or from the command line:
+	ectool evalDsl --dslFile SessionidREST_python.groovy
+
 */
 
 
