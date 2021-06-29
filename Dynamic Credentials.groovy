@@ -25,7 +25,7 @@ project "Credential Examples",{
 			""".stripIndent()
 			attachParameter formalParameterName : Credentials
 		}
-	property "ec_customEditorData/parameters/${Credentials}", formType: "standard"
+	property "ec_customEditorData/parameters/${Credentials}/formType", value: "standard"
   	}
 	pipeline 'Use Dynamic Credentials', {
 		formalParameter Credentials, type: 'credential', required: true
