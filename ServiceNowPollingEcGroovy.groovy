@@ -23,12 +23,14 @@ project "ServiceNow",{
 			ElectricFlow ef = new ElectricFlow()
 			
 			def PollingInterval = $[PollingInterval]
+			def RecordID = ef.getProperty(propertyName: '/myJob/RecordID').property.value
+			println "Record ID = ${RecordID}"
 			
 			GetApprovalStatus = {
 				def params = [
 					new ActualParameter('config_name', '$[Configuration]'),
 					new ActualParameter('property_sheet', '/myJob'),
-					new ActualParameter('record_id', '$[RecordID]'),
+					new ActualParameter('record_id', RecordID)
 
 				]	  
 				def RunResponse = ef.runProcedure procedureName: 'GetRecord', projectName: '/plugins/EC-ServiceNow/project', 		actualParameters: params
@@ -40,16 +42,25 @@ project "ServiceNow",{
 				def JobStatus
 				while ((JobStatus = (String) ef.getJobStatus(jobId: JobId).status) != "completed") {
 					println "Job status: " + JobStatus
+					ef.setProperty propertyName: "/myJobStep/summary", value: """<html><a href="${JobId}">Polling ServiceNow</a></html>"""
 					sleep 5000 // 5 seconds
 				}
-				
-				def SN_ResponseJson = ef.getProperty(propertyName: "/myJob/ResponseContent", jobId: JobId).property.value
-				def Slurper = new JsonSlurper()
-				def ApprovalStatus = Slurper.parseText(SN_ResponseJson)[0].approval
-				def SysId = Slurper.parseText(SN_ResponseJson)[0].sys_id
-				ef.setProperty propertyName: "/myJob/report-urls/ServiceNow Record: $[RecordID]", value: "\$[/plugins/EC-ServiceNow/project/ServiceNow_cfgs/\$[Configuration]/host]/nav_to.do?uri=change_request.do?sys_id=${SysId}"
-				println "Approval status: $ApprovalStatus"
-				return ApprovalStatus
+				if ((JobOutcome = (String) ef.getJobStatus(jobId: JobId).outcome) == "success") {
+					def SN_ResponseJson = ef.getProperty(propertyName: "/myJob/ResponseContent", jobId: JobId).property.value
+					def Slurper = new JsonSlurper()
+					def ApprovalStatus = Slurper.parseText(SN_ResponseJson)[0].approval
+					def SysId = Slurper.parseText(SN_ResponseJson)[0].sys_id
+					ef.setProperty propertyName: "/myJob/report-urls/ServiceNow Record", value: "\$[/plugins/EC-ServiceNow/project/ServiceNow_cfgs/\$[Configuration]/host]/nav_to.do?uri=change_request.do?sys_id=${SysId}"
+					println "Approval status: $ApprovalStatus"
+					return ApprovalStatus
+				} else {
+					// ServiceNow plugin job failed
+					println "The EC-ServiceNow job has failed. Click the Get Status Job link to debug."
+					ef.setProperty propertyName: "/myJobStep/summary", value: """<html><a href="${JobId}">Plugin Job Failed</a></html>"""
+					System.exit(1)
+					return "PluginError"
+				}
+
 			}
 			
 			while (GetApprovalStatus() != '$[TargetState]') {
