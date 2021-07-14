@@ -42,7 +42,7 @@ project "ServiceNow",{
 				def JobStatus
 				while ((JobStatus = (String) ef.getJobStatus(jobId: JobId).status) != "completed") {
 					println "Job status: " + JobStatus
-					ef.setProperty propertyName: "/myJobStep/summary", value: """<html><a href="${JobId}">Polling ServiceNow</a></html>"""
+					ef.setProperty propertyName: "/myJobStep/summary", value: """<html><a href="${JobId}"> Polling ServiceNow</a></html>"""
 					sleep 5000 // 5 seconds
 				}
 				if ((JobOutcome = (String) ef.getJobStatus(jobId: JobId).outcome) == "success") {
@@ -56,7 +56,7 @@ project "ServiceNow",{
 				} else {
 					// ServiceNow plugin job failed
 					println "The EC-ServiceNow job has failed. Click the Get Status Job link to debug."
-					ef.setProperty propertyName: "/myJobStep/summary", value: """<html><a href="${JobId}">Plugin Job Failed</a></html>"""
+					ef.setProperty propertyName: "/myJobStep/summary", value: """<html><a href="${JobId}"> Plugin Job Failed</a></html>"""
 					System.exit(1)
 					return "PluginError"
 				}
@@ -66,7 +66,7 @@ project "ServiceNow",{
 			while (GetApprovalStatus() != '$[TargetState]') {
 				sleep PollingInterval * 1000
 			}
-			
+			ef.setProperty propertyName: "/myJobStep/summary", value: """Target state reached"""
 			
 		'''.stripIndent()
 	}
