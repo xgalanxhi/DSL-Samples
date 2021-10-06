@@ -45,7 +45,6 @@ project "GitOps",{
 			'token_credential': 'token_credential',
 		]
 		pluginKey = 'EC-Git'
-		projectName = 'GitOps'
 		credential 'token_credential', {
 			userName = ''
 			password = GitToken
