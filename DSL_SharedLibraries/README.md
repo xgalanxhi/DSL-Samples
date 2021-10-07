@@ -1,5 +1,8 @@
 # DSL Shared Libraries
-This example illustrates how to create reusable CloudBees CD/RO DSL code.
+DSL is evaluated on the CloudBees CD/RO server. If the DSL run by the evalDsl command contains file
+references, these files need to be on the server file system. The clientFiles argument can be used
+to push files from the client where the evalDsl API is run to the server.
+This example illustrates how to use the clientFiles argument to create reusable CloudBees CD/RO DSL code.
 The file sharedFiles/com/electriccloud/commander/dsl/sample/DslBaseScript.groovy contains the top level resusable code which references other files in this directory tree.
 
 ## Dependencies
