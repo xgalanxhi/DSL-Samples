@@ -7,6 +7,7 @@ The file sharedFiles/com/electriccloud/commander/dsl/sample/DslBaseScript.groovy
 
 ## Dependencies
 - Requires CloudBees CD/RO version 10.3 or later
+- Uses Stomp protocol. Currently cannot be proxied, so client or client have to have direct access to server.
 
 ## Instructions
 - Add your own resusable code to DslBaseScript.groovy and update referenceScript.groovy to use it
