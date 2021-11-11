@@ -12,4 +12,4 @@ The file sharedFiles/com/electriccloud/commander/dsl/sample/DslBaseScript.groovy
 ## Instructions
 - Add your own resusable code to DslBaseScript.groovy and update referenceScript.groovy to use it
 - Apply the referenceScript.groovy
-    `ectool evalDsl --dslFile referenceScript.groovy --clientFiles ./sharedFiles`
+    `ectoolevalDsl --dslFile referenceScript.groovy --clientFiles ./sharedFiles`
