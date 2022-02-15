@@ -4,7 +4,7 @@ import com.electriccloud.commander.dsl.sample.DslBaseScript
 // DslBaseScript encapsulates the magic for invoking dsl scripts
 @BaseScript DslBaseScript baseScript
 
-File myFile = new File("C:/Users/gmaxey.GMAXEY-5480/Documents/GitHub/DSL-Samples/DSL_SharedLibraries/test.txt")
+File myFile = new File("C:/path/test.txt")
 println myFile.getText('UTF-8')
 
 // Examples for using shared scripts and code
