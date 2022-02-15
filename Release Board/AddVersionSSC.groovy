@@ -6,12 +6,12 @@ project 'Bill of Materials',{
 			description = '''\
 				<xml>
 					<title>
-			
+						Add or Modify Package
 					</title>
 
 					<htmlData>
 						<![CDATA[
-							
+							Specify an application package to create or modify
 						]]>
 					</htmlData>
 				</xml>
@@ -25,6 +25,8 @@ project 'Bill of Materials',{
 							property args['appVersion'],{
 								property comp,
 									value: args[comp]
+								property "_status",
+									value: args['stat']
 							}
 						}
 				}
@@ -33,17 +35,17 @@ project 'Bill of Materials',{
 			iconUrl = 'icon-catalog-item.svg'
 			useFormalParameter = '1'
 
-			formalParameter 'proj', defaultValue: null, {
+			formalParameter 'proj', defaultValue: projectName, {
 				expansionDeferred = '0'
-				label = null
+				label = "Application project name"
 				orderIndex = '1'
 				required = '1'
 				type = 'project'
 			}
 
-			formalParameter 'app', defaultValue: null, {
+			formalParameter 'app', defaultValue: "Sample App", {
 				dependsOn = 'proj'
-				label = null
+				label = "Application name"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
@@ -63,21 +65,28 @@ project 'Bill of Materials',{
 				type = 'select'
 			}
 			formalParameter 'appVersion', defaultValue: null, {
-				label = null
+				label = "Application package version"
 				orderIndex = '3'
 				required = '1'
 				type = 'entry'
 			}
-			formalParameter 'compA', defaultValue: null, {
-				label = null
+			formalParameter 'stat', defaultValue: "candidate", {
+				label = "Package status"
 				orderIndex = '4'
+				required = '1'
+				simpleList = 'production|candidate|archived'
+				type = 'select'
+			}
+			formalParameter 'compA', defaultValue: null, {
+				label = "CompA version"
+				orderIndex = '5'
 				required = '1'
 				type = 'entry'
 			}
 
 			formalParameter 'compB', defaultValue: null, {
-				label = null
-				orderIndex = '5'
+				label = "CompB version"
+				orderIndex = '6'
 				required = '1'
 				type = 'entry'
 			}

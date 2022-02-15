@@ -6,12 +6,12 @@ project 'Bill of Materials',{
 			description = '''\
 				<xml>
 					<title>
-			
+						Set an application package status
 					</title>
 
 					<htmlData>
 						<![CDATA[
-							
+							Select an application package for status modification
 						]]>
 					</htmlData>
 				</xml>
@@ -31,17 +31,17 @@ project 'Bill of Materials',{
 			iconUrl = 'icon-catalog-item.svg'
 			useFormalParameter = '1'
 
-			formalParameter 'proj', defaultValue: null, {
+			formalParameter 'proj', defaultValue: projectName, {
 				expansionDeferred = '0'
-				label = null
+				label = "Application project name"
 				orderIndex = '1'
 				required = '1'
 				type = 'project'
 			}
 
-			formalParameter 'app', defaultValue: null, {
+			formalParameter 'app', defaultValue: "Sample App", {
 				dependsOn = 'proj'
-				label = null
+				label = "Application name"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
@@ -62,7 +62,7 @@ project 'Bill of Materials',{
 			}
 			formalParameter 'appVersion', defaultValue: null, {
 				dependsOn = 'proj,app'
-				label = null
+				label = "Application package version"
 				optionsDsl = '''\
 					import com.electriccloud.domain.FormalParameterOptionsResult
 					def options = new FormalParameterOptionsResult()
@@ -83,7 +83,7 @@ project 'Bill of Materials',{
 				type = 'select'
 			}			
 			formalParameter 'stat', defaultValue: null, {
-				label = null
+				label = "Package status"
 				orderIndex = '4'
 				required = '1'
 				simpleList = 'production|candidate|archived'

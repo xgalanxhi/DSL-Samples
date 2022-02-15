@@ -25,14 +25,8 @@ Instructions
 
 */
 
-def GitToken = ''
-def Repo = ''
-
-aclEntry systemObjectName: "projects",
-	objectType: 'systemObject',
-	principalType : 'user',
-	principalName: "project: Electric Cloud",
-	modifyPrivilege : 'allow'
+def GitToken = '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'
+def Repo = 'https://github.com/cb-thunder/GitOps.git'
 
 project "GitOps",{
 	pluginConfiguration 'GitHub', {
@@ -54,7 +48,7 @@ project "GitOps",{
 		branch = "main"
 		configurationName = "GitHub"
 		configurationProjectName = projectName
-		destinationDir = "/tmp"
+		destinationDir = "tmp"
 		repository = Repo
 		scmType = "git"
 		syncType = "fromScm"
@@ -65,3 +59,11 @@ project "GitOps",{
 		}
 	}
 }
+
+// ACL entry required because repository is creating a new project
+// Add ACL entries for any other objects being create or modified by the repo DSL
+aclEntry systemObjectName: "projects",
+	objectType: 'systemObject',
+	principalType : 'user',
+	principalName: "project: GitOps",
+	modifyPrivilege : 'allow'
