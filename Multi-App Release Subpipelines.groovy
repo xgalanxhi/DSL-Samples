@@ -51,7 +51,7 @@ project Project, {
 			processStep 'Create Artifact Placeholder', {
 				actualParameter = [
 					'commandToRun': '''\
-						artifact artifactKey: "$[/myComponent/ec_content_details/artifactName]", groupId: "group"
+						artifact artifactKey: "$[/myReferenceComponent/componentName]", groupId: "group"
 					'''.stripIndent(),
 					'shellToUse': 'ectool evalDsl --dslFile',
 				]
@@ -66,7 +66,7 @@ project Project, {
 
 			processStep 'Uninstall', {
 				actualParameter = [
-					'commandToRun': 'echo "Uninstalling $[/myComponent]"',
+					'commandToRun': 'echo "Uninstalling $[/myReferenceComponent/componentName]"',
 				]
 				processStepType = 'command'
 				subprocedure = 'RunCommand'
@@ -90,7 +90,7 @@ project Project, {
 			property 'pluginProjectName', value: 'EC-Artifact'
 			retrieveToDirectory = ''
 
-			property 'versionRange', value: '$[comp1_version]'
+			property 'versionRange', value: '$[$[/myReferenceComponent/componentName]_version]'
 		}
 	}
 
