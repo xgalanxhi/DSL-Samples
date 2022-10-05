@@ -1,3 +1,12 @@
+/*
+
+Example of using DSL to invoke findObjects API
+
+Here's an example of deleteObjects with a filter from the command line
+ectool deleteObjects application --filters "{ propertyName=>'applicationId', operator=>'equals', operand1=>'059999bf-a611-11ec-ae3b-0a0027000005' }"
+
+*/
+
 // Imports needed for invoking findObjects in the DSL script
 import com.electriccloud.query.Filter
 import com.electriccloud.query.CompositeFilter
