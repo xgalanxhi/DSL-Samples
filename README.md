@@ -25,3 +25,4 @@ widget (report).
 - ![Job Details with link](/images/Report%20Data/JobDetails.png)
 - ![Raw TAB data](/images/Report%20Data/RawTabData.png)
 - ![In MS Excel](/images/Report%20Data/Excel.png)
+
