@@ -5,6 +5,9 @@ Example of using DSL to invoke findObjects API
 Here's an example of deleteObjects with a filter from the command line
 ectool deleteObjects application --filters "{ propertyName=>'applicationId', operator=>'equals', operand1=>'059999bf-a611-11ec-ae3b-0a0027000005' }"
 
+Find all the non-deploy jobs from the project "Default"
+ectool countObjects job --maxIds 10000 --filters "{ propertyName=>'applicationId', operator=>'isNull' },{propertyName=>'projectName',operator=>'equals',operand1=>'Default'}"
+
 */
 
 // Imports needed for invoking findObjects in the DSL script
