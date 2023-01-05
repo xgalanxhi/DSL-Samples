@@ -25,7 +25,7 @@ Instructions
 
 */
 
-def GitToken = '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'
+def GitToken = ''
 def Repo = 'https://github.com/cb-thunder/GitOps.git'
 
 project "GitOps",{
