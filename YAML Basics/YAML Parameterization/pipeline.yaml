@@ -1,0 +1,27 @@
+# ectool evalDsl --format yaml --dslFile pipeline.yaml --parametersFile values.yaml
+# or
+# ectool evalDsl --format yaml --dslFile pipeline.yaml --parameters '{"values":{"project":"A Project", "procedure":"A Procedure"}}'
+
+apiVersion: cloudbees.com/v10.11
+kind: project
+metadata:
+  name: {{ values.project }}
+spec:
+  procedures:
+    - name: First procedure
+      formalParameters:
+        - name: Procedure input
+      steps:
+        - name: Echo
+          command: echo $[Procedure input]
+  pipelines:
+    - name: {{ values.pipeline }}
+      stages:
+        - name: First stage
+          tasks:
+            - name: First task
+              taskType: PROCEDURE
+              subprocedure: First procedure
+              actualParameters:
+                - name: Procedure input
+                  value: 1234

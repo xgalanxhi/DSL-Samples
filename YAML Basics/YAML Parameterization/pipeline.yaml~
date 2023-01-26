@@ -1,0 +1,23 @@
+apiVersion: cloudbees.com/v10.11
+kind: project
+metadata:
+  name: Learn YAML
+spec:
+  procedures:
+    - name: First procedure
+      formalParameters:
+        - name: Procedure input
+      steps:
+        - name: Echo
+          command: echo $[Procedure input]
+  pipelines:
+    - name: Test pipeline
+      stages:
+        - name: First stage
+          tasks:
+            - name: First task
+              taskType: PROCEDURE
+              subprocedure: First procedure
+              actualParameters:
+                - name: Procedure input
+                  value: 1234
