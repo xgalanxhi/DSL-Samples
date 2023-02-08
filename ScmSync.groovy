@@ -13,19 +13,19 @@ Objects Created
 
 Instructions
 - Create a git token that can be used to run APIs against your git provider
-  (GitHub, Bitbucket, etc) and set the GitToken variable below to that value
+	(GitHub, Bitbucket, etc) and set the GitToken variable below to that value
 - Create a git repository with CloudBees CD/RO DSL content. This can be DSL
-  files at the root of of the repository and or use the "Export DSL" Self-
-  service catalog items to generated a DSL directory hierarchy. Fill in the
-  value for the Repo variable below.
+	files at the root of of the repository and or use the "Export DSL" Self-
+	service catalog items to generated a DSL directory hierarchy. Fill in the
+	value for the Repo variable below.
 - Run this DSL to create the objects
 	ectool evalDsl --dslFile ScmSync.groovy
 - Periodially, you will see a job that runs this EC-Git plugin procedure "Polling".
-  This procedure will apply any the code from your repository if there are changes.
+	This procedure will apply any the code from your repository if there are changes.
 
 */
 
-def GitToken = 'ghp_xxxxxx'
+def GitToken = ''
 def Repo = 'https://github.com/cb-thunder/GitOps.git'
 
 project "GitOps",{

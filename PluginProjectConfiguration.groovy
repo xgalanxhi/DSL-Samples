@@ -9,7 +9,7 @@ an external project (outside of the plugin project).
 To hide the credential values, they are passed in a parameter data structure
 from the command line using environment variables:
 
-ectool evalDsl --dslFile configurations/EC-JIRA/Configuration.groovy --parameters "{\"pluginConfiguration\":\"Jira\",\"userName\":\"$JIRA_USER\",\"passWord\":\"$JIRA_TOKEN\",\"url\":\"$JIRA_URL\"}"
+ectool evalDsl --dslFile PluginProjectConfiguration.groovy --parameters "{\"pluginConfiguration\":\"Jira\",\"userName\":\"$JIRA_USER\",\"passWord\":\"$JIRA_TOKEN\",\"url\":\"$JIRA_URL\"}"
 
 */
 
