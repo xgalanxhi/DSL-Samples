@@ -3,6 +3,7 @@ package com.electriccloud.commander.dsl.sample
 import org.codehaus.groovy.control.CompilerConfiguration
 import com.electriccloud.commander.dsl.DslDelegate
 import com.electriccloud.commander.dsl.DslDelegatingScript
+import groovy.yaml.YamlSlurper
 
 abstract class DslBaseScript extends DslDelegatingScript {
 
@@ -12,6 +13,20 @@ abstract class DslBaseScript extends DslDelegatingScript {
 	def createPipelineFromTemplate(String projectName, String pipelineName) {
 		evalDslScript('scripts/pipelineTemplate.dsl',
 				[projectName: projectName, pipelineName: pipelineName])
+	}
+
+	/**
+	 * Utility method for creating a pipeline based on the pre-defined template
+	 */
+
+	def createPipelineFromTemplate(String yamlParamFilePath) {
+		// Find file in classpath
+		InputStream stream = this.scriptClassLoader
+				.getResourceAsStream(yamlParamFilePath)
+		def yamlFileContent = stream?.text
+		println "yamlFileContent: " + yamlFileContent
+		evalDslScript('scripts/pipelineTemplate.dsl',
+				new YamlSlurper().parseText(yamlFileContent))
 	}
 
 	/**
