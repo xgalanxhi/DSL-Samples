@@ -4,8 +4,8 @@ import com.electriccloud.commander.dsl.sample.DslBaseScript
 // DslBaseScript encapsulates the magic for invoking dsl scripts
 @BaseScript DslBaseScript baseScript
 
-File myFile = new File("C:/path/test.txt")
-println myFile.getText('UTF-8')
+//File myFile = new File("C:/path/test.txt")
+//println myFile.getText('UTF-8')
 
 // Examples for using shared scripts and code
 
@@ -15,5 +15,8 @@ evalDslScript 'scripts/project.dsl'
 // 2. Create a pipeline based on a template
 createPipelineFromTemplate 'Pipeline project', 'Sample pipeline'
 
-// 3. Add a task based on a template to existing pipeline
+// 3. Create a pipeline based on a template using a yaml file
+createPipelineFromTemplate 'params/pipelineConfig.yaml'
+
+// 4. Add a task based on a template to existing pipeline
 addPreGateApprovalTask 'Pipeline project', 'Sample pipeline', 'Stage 1'
