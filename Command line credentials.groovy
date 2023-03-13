@@ -35,7 +35,7 @@ project "Credentials",{
 				/*
 					This example uses 'echo' to purposefully show the credentials as proof that this mechanism works. When using this approach, make sure not to echo the secret part of the credential.
 				*/
-				println "echo Username: \$userName, Password: \$password".execute().text
+				println "Username: \$userName, Password: \$password"
 			""".stripIndent()
 			attachCredential {
 				credentialName = "/projects/$projectName/credentials/$CredentialName"
