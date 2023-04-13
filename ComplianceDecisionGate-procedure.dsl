@@ -85,7 +85,7 @@ while (1) {
        case("error") {
         exit 1;
        }
-       case("waiting") {
+       case("inprocess") {
         print "Waiting for result...\\n";
         sleep(10);
        }
