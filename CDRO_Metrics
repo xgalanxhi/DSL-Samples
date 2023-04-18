@@ -1,0 +1,629 @@
+project 'CDRO_Metrics', {
+  tracked = '0'
+
+  credential 'Analytics DEV Token', userName: 'admin', {
+    credentialType = 'LOCAL'
+  }
+
+  credential 'Analytics PrePROD Token', userName: 'admin', {
+    credentialType = 'LOCAL'
+  }
+
+  credential 'Analytics PROD Token', userName: 'admin', {
+    credentialType = 'LOCAL'
+  }
+
+  procedure 'Get Project Data', {
+    timeLimit = '0'
+
+    formalParameter 'exportCSV', defaultValue: 'true', {
+      checkedValue = 'true'
+      orderIndex = '1'
+      type = 'checkbox'
+      uncheckedValue = 'false'
+    }
+
+    formalParameter 'exportHTML', defaultValue: 'true', {
+      checkedValue = 'true'
+      orderIndex = '2'
+      type = 'checkbox'
+      uncheckedValue = 'false'
+    }
+
+    step 'Ingest Data', {
+      command = '''import com.electriccloud.client.groovy.ElectricFlow
+import com.electriccloud.client.groovy.apis.ApiUtils
+import groovy.transform.Field 
+import java.text.SimpleDateFormat
+
+
+println "Output: "
+
+@Field ElectricFlow ef 		    = new ElectricFlow()
+@Field ElectricFlow efDev 		= new ElectricFlow()
+@Field ElectricFlow efPreProd 	= new ElectricFlow()
+@Field ElectricFlow efProd 	    = new ElectricFlow()
+
+localUrl   = ApiUtils.serverUrlWithPort
+devUrl	   = efDev.constructFullyQualifiedServerURL("https://dev.cdro.com:443")
+preProdUrl = efPreProd.constructFullyQualifiedServerURL("https://pre-prod.cdro.com:443")
+prodUrl    = efProd.constructFullyQualifiedServerURL("https://prod.cdro.com:443")
+
+devPassword 	= ef.getFullCredential(credentialName: "Analytics DEV Token").credential.password
+preProdPassword = ef.getFullCredential(credentialName: "Analytics PrePROD Token").credential.password
+prodPassword 	= ef.getFullCredential(credentialName: "Analytics PROD Token").credential.password
+
+ApiUtils.serverUrlWithPort = devUrl
+devResult 		=  efDev.loginSso(token: devPassword )
+ApiUtils.serverUrlWithPort = preProdUrl
+preProdResult 	=  efPreProd.loginSso(token: preProdPassword )
+ApiUtils.serverUrlWithPort = prodUrl
+prodResult 	    =  efProd.loginSso(token: prodPassword )
+
+localSession 	= System.getenv("COMMANDER_SESSIONID")
+devSession 		= devResult.sessionId
+preProdSession 	= preProdResult.sessionId
+prodSession 	= prodResult.sessionId
+
+def contextSwitch(env) {
+	if ( env == "local" ) {
+    	ApiUtils.serverUrlWithPort = localUrl
+		System.setProperty("COMMANDER_SESSIONID", localSession)
+        return ef
+    }
+    else if ( env == "dev" ) {
+    	ApiUtils.serverUrlWithPort = devUrl
+		System.setProperty("COMMANDER_SESSIONID", devSession)
+        return efDev
+    }
+    else if ( env == "preProd" ) {
+	    ApiUtils.serverUrlWithPort = preProdUrl
+		System.setProperty("COMMANDER_SESSIONID", preProdSession)
+        return efPreProd
+    }
+	 else if ( env == "prod" ) {
+	    ApiUtils.serverUrlWithPort = prodUrl
+		System.setProperty("COMMANDER_SESSIONID", prodSession)
+        return efProd
+    }
+}
+
+print "[*] Reading Run Parameters ... "
+
+exportCSV  = contextSwitch("local").getProperty(propertyName: \'/myJob/exportCSV\').property.value
+exportHTML = contextSwitch("local").getProperty(propertyName: \'/myJob/exportHTML\').property.value
+
+println "Done."
+
+
+print "[*] Incrementing Counter ... "
+// Get and IncrementCounter
+counter = contextSwitch("local").getProperty(propertyName: \'Counter\', projectName: \'CDRO_Metrics\').property.value
+counter = counter.toInteger()
+counter++
+contextSwitch("local").setProperty(propertyName: \'Counter\', projectName: \'CDRO_Metrics\', value: counter.toString())
+println "Done."
+
+@Field Map master = [:]
+
+def collectEnvironmentData(environment) {
+  println "[*] Environment: " + environment
+  print "[*] Running Custom Reports ... "
+  // Run Reports and get Data
+
+  def dataObject1 = contextSwitch(environment).runReport(projectName: "CDRO_Metrics", reportName: "CDRO_Metrics Excel List of Project Pipeline Runs").result
+  def dataObject2 = contextSwitch(environment).runReport(projectName: "CDRO_Metrics", reportName: "CDRO_Metrics Excel Pipelines with PROD").result
+  def dataObject3 = contextSwitch(environment).runReport(projectName: "CDRO_Metrics", reportName: "CDRO_Metrics Excel Pipelines using ITControls").result
+  def dataObject4 = contextSwitch(environment).runReport(projectName: "CDRO_Metrics", reportName: "CDRO_Metrics Excel Production Pipeline Runs").result
+
+println "Done."
+
+print "[*] Running Data joins"
+
+
+  Map do1=[:]
+  for (dataPoint in dataObject1) {
+      do1[dataPoint["projectName"]]=[pipelineRuns : 1]
+  }
+
+  Map do2=[:]
+  for (dataPoint in dataObject2) {
+      if (!do2[dataPoint["projectName"]]) 
+          do2[dataPoint["projectName"]]=[:]
+      do2[dataPoint["projectName"]][dataPoint["pipelineName"]] = [prodRun : 1]
+
+  }
+
+  Map do3=[:]
+  for (dataPoint in dataObject3) {
+      if (!do3[dataPoint["projectName"]])
+          do3[dataPoint["projectName"]]=[:]
+      do3[dataPoint["projectName"]][dataPoint["pipelineName"]] = [ITCRun : 1]
+  }
+
+  Map do4=[:]
+  for (dataPoint in dataObject4) {
+      do4[dataPoint["projectName"]]=[productionRuns : 1]
+  }
+
+
+
+  println "Done."
+
+  print "[*] Getting Project Statistics ... "
+  // Onboarding Measure Definitions
+  onboardingMeasureQ = ["Empty Projects", "Projects in Design Phase",  "Projects Actively Executing Pipelines", "Projects Deploying to Poduction"]
+
+  projects = contextSwitch(environment).getProjects().project
+  
+  // Get Project specific statistics
+  for(project in projects){
+      def projectName = project["projectName"]
+
+      // Get CreateTime
+      def createTime = contextSwitch(environment).getProject(projectName: projectName).project.createTime ?: \'\'
+
+      // Get Proecdure Count
+      //def procedureCount = contextSwitch(environment).getProcedures(projectName: projectName).procedure?.size() ?: 0
+      def procedureCount = 0
+
+      // Get Pipeline Count
+      def pipelineCount = contextSwitch(environment).getPipelines(projectName: projectName).pipeline?.size() ?: 0
+
+      // Get Release Count
+      def releaseCount = contextSwitch(environment).getReleases(projectName: projectName).release?.size() ?: 0
+
+      // Get Application Count
+      //def applicationCount = contextSwitch(environment).getApplications(projectName: projectName).application?.size() ?: 0
+      def applicationCount = 0
+
+      // Get Environment Count
+      //def environmentCount = contextSwitch(environment).getEnvironments(projectName: projectName).environment?.size() ?: 0
+      def environmentCount = 0
+
+      if (  procedureCount + pipelineCount + releaseCount + applicationCount + environmentCount > 0 ) { 
+         isNotEmpty = 1
+      } else { isNotEmpty = 0 }
+
+      def GBGF;
+      // Get GB Property
+      def GBProperty = " "
+      try {
+          GBProperty = contextSwitch(environment).getProperty(propertyName:  "GB_VALUE", projectName: projectName).property.value
+          GBGF = GBProperty;
+      } catch (Exception e) { }
+      GBGF = GBProperty;
+
+      def tableID = " "
+      try {
+          tableID = projectName.split(\'_\').last()
+      } catch (Exception e) { }
+
+      def pipruns = 0
+      try {
+          pipruns = do1[projectName]["pipelineRuns"] ?: 0
+      } catch (Exception e) { }
+
+      def prodruns = 0
+      try {
+          prodruns = do4[projectName]["productionRuns"] ?: 0
+      } catch (Exception e) { }
+
+      def itc_pipelines = " "
+      try {
+          if (do3[projectName]) {
+              itc_pipelines = do3[projectName].keySet()
+          }
+      } catch (Exception e) { }
+      def prod_pipelines = " "
+      try {
+          if (do2[projectName]) {
+              prod_pipelines = do2[projectName].keySet()
+          }
+      } catch (Exception e) { }
+      def hasITC = 0
+      if (itc_pipelines != " ") {
+          hasITC = 1
+      }
+
+      onboardingMeasure = isNotEmpty + pipruns + prodruns
+
+      master[projectName + "-" + environment]=[ createTime : createTime, procedureCount : procedureCount, pipelineCount :pipelineCount ,releaseCount : releaseCount, applicationCount: applicationCount, environmentCount :environmentCount, GBProperty : GBProperty, GBGF : GBGF, ID : tableID, isNotEmpty: isNotEmpty, pipelineRuns: pipruns, productionRuns: prodruns, onboardingMeasure: onboardingMeasure, itc_pipelines: itc_pipelines, prod_pipelines: prod_pipelines, environment: environment]
+
+      // Push Data to Analytics
+      contextSwitch("local").sendReportingData(reportObjectTypeName: "cust_onboarding", payload: "{\\"counter\\": \\"$counter\\",\\"timestamp\\": \\"$createTime\\",\\"projectName\\": \\"$projectName\\",\\"procedureCount\\": \\"$procedureCount\\",\\"pipelineCoune\\": \\"$pipelineCount\\",\\"releaseCount\\": \\"$releaseCount\\",\\"applicationCount\\": \\"$applicationCount\\",\\"environmentCount\\": \\"$environmentCount\\",\\"gbgf\\": \\"$GBGF\\",\\"id\\": \\"$tableID\\",\\"notEmpty\\": \\"$isNotEmpty\\",\\"pipelineRuns\\": \\"$pipruns\\",\\"hasITC\\": \\"$hasITC\\",\\"productionRuns\\": \\"$prodruns\\",\\"onboardingMeasure\\": \\"" + onboardingMeasureQ[onboardingMeasure] + "\\",\\"environment\\":\\"$environment\\" }")
+  }
+
+  println "Done."
+
+
+}
+collectEnvironmentData("prod")
+collectEnvironmentData("dev")
+//collectEnvironmentData("preProd")
+
+ReportData = master
+
+print "[*] Exporting CSV and HTML ... "
+
+File directory = new File("artifacts")
+if (! directory.exists()) directory.mkdir()
+
+
+// Create CSV Report
+if ( exportCSV == "true" ) {
+  fileName = "report.csv"
+  File fh = new File("artifacts" + \'/\' + fileName)
+  fh << \'Project Name\\tProject Create Date\\tProcedure Count\\tPipeline Count\\tRelease Count\\tApplication Count\\tEnvironment Count\\tGB Property\\tGBGF\\tID\\tIs not Empty\\tPipeline Runs\\tProduction Runs\\tOnboarding Measure\\tPipelines with ITControls\\tPipelines with Prod Stages\\tEnvironment\\n\'
+  ReportData.each {
+      line -> fh << "$line.key\\t"; line.value.each { 
+          field -> fh << "$field.value\\t"
+      }; fh << \'\\n\'
+  }
+
+  contextSwitch("local").setProperty(
+  propertyName: "/myJob/report-urls/Report CSV",
+  value: "/commander/jobSteps/$[/myJobStep/jobStepId]/${fileName}"
+  ) 
+}
+
+// Create HTML Report
+if ( exportHTML == "true" ) {
+  HTML1 = contextSwitch("local").getProperty(propertyName: \'/myProcedure/HTML1\').property.value
+  HTML2 = contextSwitch("local").getProperty(propertyName: \'/myProcedure/HTML2\').property.value
+  fileName = "report.html"
+  File fh = new File("artifacts" + \'/\' + fileName)
+  fh << HTML1
+  fh << \'<tr class="header"><th>Project Name</th><th>Project Create Date</th><th>Procedure Count</th><th>Pipeline Count</th><th>Release Count</th><th>Application Count</th><th>Environment Count</th><th>GB Property</th><th>GBGF</th><th>ID</th><th>Is not Empty</th><th>Pipeline Runs</th><th>Production Runs</th><th>Onboarding Measure</th><th>Pipelines with ITControls</th><th>Pipelines with Prod Stages</th><th>Environment</th></thead><tbody>\\n\'
+  ReportData.each {
+      line -> fh << "<tr><td>$line.key</td>"; line.value.each { 
+          field -> fh << "<td>$field.value</td>"
+      }; fh << \'</tr>\\n\'
+  }
+  fh << HTML2
+  contextSwitch("local").setProperty(
+  propertyName: "/myJob/report-urls/Report HTML",
+  value: "/commander/jobSteps/$[/myJobStep/jobStepId]/${fileName}"
+  )
+}
+
+
+println "Done."
+'''
+      resourceName = 'ARO_DEV_01'
+      shell = 'ec-groovy'
+      timeLimit = '0'
+      timeLimitUnits = 'seconds'
+      workspaceName = 'default'
+
+      attachCredential {
+        credentialName = '/projects/CDRO_Metrics/credentials/Analytics DEV Token'
+      }
+
+      attachCredential {
+        credentialName = '/projects/CDRO_Metrics/credentials/Analytics PrePROD Token'
+      }
+
+      attachCredential {
+        credentialName = '/projects/CDRO_Metrics/credentials/Analytics PROD Token'
+      }
+    }
+
+    // Custom properties
+
+    property 'ec_customEditorData', {
+
+      // Custom properties
+
+      property 'parameters', {
+
+        // Custom properties
+
+        property 'exportCSV', {
+
+          // Custom properties
+
+          property 'checkedValue', value: 'true'
+          formType = 'standard'
+
+          property 'uncheckedValue', value: 'false'
+        }
+
+        property 'exportHTML', {
+
+          // Custom properties
+
+          property 'checkedValue', value: 'true'
+          formType = 'standard'
+
+          property 'uncheckedValue', value: 'false'
+        }
+      }
+    }
+
+    property 'HTML1', value: '''<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+h2 {
+	color: #005a96;
+    	font-family: arial;
+
+}
+
+#myInput {
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 12px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  font-family: arial;
+
+}
+.styled-table {
+	font-family: arial;
+}
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    
+}
+.styled-table thead tr {
+    background-color: #005a96;
+    color: #ffffff;
+    text-align: left;
+
+    
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #005a96;
+}
+
+.styled-table tbody tr:hover {
+
+    color: #005a96;
+}
+</style>
+</head>
+<body>
+
+<h2>Onboarding Metrics</h2>
+
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="&#x1F50D; Search for projects.." title="Filter">
+
+<table id="myTable" class="styled-table">
+<thead>
+''', {
+      expandable = '0'
+    }
+
+    property 'HTML2', value: '''  </tbody>
+</table>
+
+<script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    tds = tr[i].getElementsByTagName("td"); 
+    for (ii = 0; ii < tds.length; ii++) {
+      td = tds[ii];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+          break;
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+}
+</script>
+
+</body>
+</html>
+''', {
+      expandable = '0'
+    }
+
+  procedure 'Setup Analytics', {
+    timeLimit = '0'
+
+    step 'Create Report Type', {
+      command = '''#ectool createReportObjectType "cust_onboarding" --displayName "Onboarding Metrics"
+#ectool createReportObjectAttribute --reportObjectAttributeName counter --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName timestamp --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName projectName --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName procedureCount --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName pipelineCoune --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName releaseCount --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName applicationCount --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName environmentCount --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName gbgf --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName id --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName notEmpty --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName pipelineRuns --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName productionRuns --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName onboardingMeasure --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName hasITC --reportObjectTypeName cust_onboarding
+#ectool createReportObjectAttribute --reportObjectAttributeName environment --reportObjectTypeName cust_onboarding
+
+ectool modifyReportObjectAttribute --reportObjectAttributeName counter --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName timestamp --reportObjectTypeName cust_onboarding --type DATETIME
+ectool modifyReportObjectAttribute --reportObjectAttributeName projectName --reportObjectTypeName cust_onboarding --type STRING
+ectool modifyReportObjectAttribute --reportObjectAttributeName procedureCount --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName pipelineCoune --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName releaseCount --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName applicationCount --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName environmentCount --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName gbgf --reportObjectTypeName cust_onboarding --type STRING
+ectool modifyReportObjectAttribute --reportObjectAttributeName id --reportObjectTypeName cust_onboarding --type STRING
+ectool modifyReportObjectAttribute --reportObjectAttributeName notEmpty --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName pipelineRuns --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName productionRuns --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName onboardingMeasure --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName hasITC --reportObjectTypeName cust_onboarding --type NUMBER
+ectool modifyReportObjectAttribute --reportObjectAttributeName environment --reportObjectTypeName cust_onboarding --type STRING'''
+      timeLimit = '0'
+      timeLimitUnits = 'seconds'
+    }
+  }
+
+  report 'CDRO_Metrics Excel List of Project Pipeline Runs', {
+    definition = '{"size":0,"query":{"bool":{"filter":[{"bool":{"must":[{"range":{"flowRuntimeStart":{"from":null,"to":"2033-04-01T03:52:24.936Z","include_lower":true,"include_upper":false,"boost":1.0}}}],"adjust_pure_negative":true,"boost":1.0}}],"adjust_pure_negative":true,"boost":1.0}},"aggregations":{"projectName":{"terms":{"field":"projectName","size":100,"shard_size":100,"min_doc_count":1,"shard_min_doc_count":0,"show_term_doc_count_error":false,"order":[{"_count":"desc"},{"_key":"asc"}]}}}}'
+    reportObjectTypeName = 'pipelinerun'
+  }
+
+  report 'CDRO_Metrics Excel Pipelines using ITControls', {
+    reportObjectTypeName = 'pipelinerun'
+    reportQuery = '{"searchCriteria":[{"criterion":"SHOULD","conditions":[{"field":"taskName","operator":"EQUALS","value":"ITControl"},{"field":"taskName","operator":"EQUALS","value":"ITControl "},{"field":"taskName","operator":"EQUALS","value":"IT Control"},{"field":"taskName","operator":"EQUALS","value":"IT Control "},{"field":"taskName","operator":"EQUALS","value":"IT_Control"},{"field":"taskName","operator":"EQUALS","value":"IT_Control "}]}],"groupBy":[{"field":"projectName","bucketSize":"1000"},{"field":"pipelineName","bucketSize":"1000"}],"aggregationFunctions":[]}'
+  }
+
+  report 'CDRO_Metrics Excel Pipelines with PROD', {
+    definition = '''{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "bool": {
+            "must": [
+              {
+                "terms": {
+                  "reportEventType": [
+                    "ef_pipeline_run_stage_completed"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "stageName": [
+                    "PROD",
+                    "Prod",
+                    "Production",
+                    "prod"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "pipelineRunOutcome": [
+                    "success",
+                    "warning"
+                  ]
+                }
+              },
+              {
+                "terms": {
+                  "taskStatus": [
+                    "success",
+                    "warning"
+                  ]
+                }
+              }
+            ],
+            "adjust_pure_negative": true
+          }
+        }
+      ],
+      "adjust_pure_negative": true
+    }
+  },
+  "aggregations": {
+    "projectName": {
+      "terms": {
+        "field": "projectName",
+        "size": 1000,
+        "shard_size": 1000,
+        "min_doc_count": 1,
+        "shard_min_doc_count": 0,
+        "show_term_doc_count_error": false,
+        "order": [
+          {
+            "_count": "desc"
+          },
+          {
+            "_key": "asc"
+          }
+        ]
+      },
+      "aggregations": {
+        "pipelineName": {
+          "terms": {
+            "field": "pipelineName",
+            "size": 1000,
+            "shard_size": 1000,
+            "min_doc_count": 1,
+            "shard_min_doc_count": 0,
+            "show_term_doc_count_error": false,
+            "order": [
+              {
+                "_count": "desc"
+              },
+              {
+                "_key": "asc"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}'''
+    reportObjectTypeName = 'pipelinerun'
+  }
+
+  report 'CDRO_Metrics Excel Production Pipeline Runs', {
+    definition = '''{"size":0,
+	"query": {
+		"bool": {
+			"filter": [{
+				"bool": {
+                  "must" : [
+                    {"terms": { "reportEventType" : ["ef_pipeline_run_stage_completed"]}},
+                    {"terms": { "stageName" : ["PROD","Prod","Production","prod"]}},
+                    {"terms": { "pipelineRunOutcome" : ["success","warning"]}},
+                    {"terms": { "taskStatus" : ["success","warning"]}}],
+					"adjust_pure_negative": true
+                }
+            }],
+			"adjust_pure_negative": true
+        }},
+      "aggregations": {
+        "projectName": {
+			"terms": {
+				"field": "projectName"
+			}
+		}
+	}
+    
+}'''
+    reportObjectTypeName = 'pipelinerun'
+  }
+
+  property 'Counter', value: '138', {
+    suppressValueTracking = '1'
+  }
+
+}
