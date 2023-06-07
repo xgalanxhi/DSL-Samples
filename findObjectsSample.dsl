@@ -8,6 +8,16 @@ ectool deleteObjects application --filters "{ propertyName=>'applicationId', ope
 Find all the non-deploy jobs from the project "Default"
 ectool countObjects job --maxIds 10000 --filters "{ propertyName=>'applicationId', operator=>'isNull' },{propertyName=>'projectName',operator=>'equals',operand1=>'Default'}"
 
+Find all triggers
+ectool findObjects trigger
+
+Loop through projects to find triggers in each
+ectool --format json getProjects | jq -r .project[].projectName | while read -r i
+do
+    echo Project: $i
+    ectool findObjects trigger --filters "{propertyName=>'projectName',operator=>'equals',operand1=>\'$i\'}"
+done
+
 */
 
 // Imports needed for invoking findObjects in the DSL script
