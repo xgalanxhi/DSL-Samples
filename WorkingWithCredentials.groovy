@@ -1,3 +1,4 @@
+
 project 'Credential Examples', {
 
 	credential 'user1', userName: 'user1', password: "user1password", passwordRecoveryAllowed = true
