@@ -44,4 +44,6 @@ The procedure requres parameters as  follows:
 
 ![Alt Text](img/example_getProperties2.png)
 
+The output of the procedure will look like the following:
 
+![Alt Text](img/example_getProperties3.png)
