@@ -2,3 +2,5 @@
 .dsl
 .idea/
 DSL-Samples.iml
+.DS_Store
+*.swp
