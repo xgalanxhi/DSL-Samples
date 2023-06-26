@@ -1,4 +1,4 @@
-# Property Browsers
+# Dynamic Credentials
 
 ## Description
 
