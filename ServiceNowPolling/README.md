@@ -61,6 +61,8 @@ The **ServiceNow** procedure in the pipeline will look like the following:
 
 ![SNOW Approval](img/snowapproval.png)
 
+![SNOW Pipeline](img/snowapproval_parameters.png)
+
 If you would like to watch a video on the pipeline running you can check out the Youtube link  bellow
 
 [![alt text](https://i.ytimg.com/vi/MEvfoWISU-8/hqdefault.jpg?sqp=-oaymwE2CPYBEIoBSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB_gmAAtAFigIMCAAQARgTIEYofzAP&rs=AOn4CLCXnq75dDZWVks2hwzHzUjwX0UJNA)](https://youtu.be/MEvfoWISU-8 "Youtube Video")
