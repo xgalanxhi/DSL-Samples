@@ -1,16 +1,28 @@
 /*
+ Copyright 2023 Cloudbees
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---------------------------------------------------------------------------------
 
 CloudBees CD DSL: Generate reporting data from a widget definition
 
 Create a self-service catalog item that can be used to generate a tab-delimited file from a DevOps Insight
 widget (report).
 
+TODO: Widget drop down only works for "Electric Cloud" & "Application Deployments"
 TODO: Documentation
 TODO: Add filtering operations
 
  */
 
-project "Report Data",{
+def CurrentProject = 'dslsamples'
+
+project CurrentProject,{
     procedure "Export Report Data",{
         formalParameter "ProjName", required: true
         formalParameter "DashName", required: true
@@ -20,6 +32,9 @@ project "Report Data",{
             import groovy.json.JsonOutput
             import com.electriccloud.client.groovy.ElectricFlow
             ElectricFlow ef = new ElectricFlow()
+            println "Project Name:   $[ProjName]"
+            println "Dashboard Name: $[DashName]"
+            println "Widget Name:    $[WidName]"
             def widget = [
               projectName: '$[ProjName]',
               dashboardName:'$[DashName]',
@@ -67,7 +82,7 @@ project "Report Data",{
             buttonLabel = 'Generate'
             dslParamForm = ''
             dslString = '''\
-                def RunId = runProcedure(procedureName: "Export Report Data", projectName: "Report Data",
+                def RunId = runProcedure(procedureName: "Export Report Data", projectName: "''' + CurrentProject + '''",
                     actualParameter: [
                         ProjName : args.ProjName,
                         DashName : args.DashName,
@@ -118,15 +133,15 @@ project "Report Data",{
                 label = 'Widget Name'
                 optionsDsl = '''\
                     import com.electriccloud.domain.FormalParameterOptionsResult
-                    
+
                     def options = new FormalParameterOptionsResult()
                     def DashName = args.parameters['DashName']?:"Application Deployments"
                     def ProjName = args.parameters['ProjName']?:"Electric Cloud"
-                    
-                    getWidgets(ProjName, dashboardName: DashName).each { Wid ->
-                      options.add(Wid.widgetName, Wid.widgetName)
+
+                    getWidgets(projectName: ProjName, dashboardName: DashName).each { Wid ->
+                        options.add(Wid.widgetName, Wid.widgetName)
                     }
-                    
+
                     return options
                 '''.stripIndent()
                 orderIndex = '3'

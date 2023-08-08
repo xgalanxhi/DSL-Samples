@@ -6,22 +6,42 @@ In general, these samples can be installed in a CloudBees CD instance using eith
 IDE or `ectool evalDsl --dslFile <filename>` from the command line. See the comments in the
 DSL files for details on their use.
 
-## [Dynamic Credentials](Dynamic%20Credentials.groovy)
-Dynamic credentials are those that are entered as parameters at runtime and only last the duration of a job or pipeline
- run. These can be used as an alternative to static credentials which are saved to a project. The ideas is that a user
- can be prompted for credentials when they are needed for the execution to pipeline tasks.
 
-- ![Pipeline Definition](/images/Dynamic%20Credentials/Pipeline%20definition.png)
-- ![Pipeline run dialog](/images/Dynamic%20Credentials/Pipeline%20run%20dialog.png)
-- ![Pipeline runtime](/images/Dynamic%20Credentials/Pipeline%20runtime.png)
-- ![Job details](/images/Dynamic%20Credentials/Job%20details.png)
-- ![Job step logfile](/images/Dynamic%20Credentials/Job%20step%20logfile.png)
+When adding new examples do the following:
 
-## [Export Report Data](ExportReportData.groovy)
-Create a self-service catalog item that can be used to generate a tab-delimited file from a DevOps Insight
-widget (report).
-- ![Application Dashboard Widget](/images/Report%20Data/ApplicationDeploymentWidget.png)
-- ![Self-service catalog entry](/images/Report%20Data/SelfserviceCatalogEntry.png)
-- ![Job Details with link](/images/Report%20Data/JobDetails.png)
-- ![Raw TAB data](/images/Report%20Data/RawTabData.png)
-- ![In MS Excel](/images/Report%20Data/Excel.png)
+1. Create a new directory for the example
+2. Use variables at the top of the script to provide any customization that the user might wish to make.  At a minimum provide a variable for the *Project* the code should be installed to.
+3. Create a `README.md` based on the template as follows:
+
+```
+# <<Sample Name>
+
+## Description
+
+<<Description of the sample>>
+
+### Installing
+
+<<Installation directions>>
+
+## Example
+
+<<Example of running the sample>>
+```
+
+4. Make sure to include the copyrigh notice at the top of any code as follows:
+
+```
+/*
+ Copyright 2023 Cloudbees
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---------------------------------------------------------------------------------
+
+*/
+```

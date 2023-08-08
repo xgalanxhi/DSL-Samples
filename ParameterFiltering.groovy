@@ -1,5 +1,7 @@
 /*
 
+UPDATE: This functionality has been added natively to the product, that is all dropdown menus now include a search field
+
 CloudBees CD DSL: Parameter filtering
 
 CloudBees CD pull down parameters can be dynamically populated using DSL.

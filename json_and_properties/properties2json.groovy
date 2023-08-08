@@ -1,4 +1,14 @@
 /*
+ Copyright 2023 Cloudbees
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---------------------------------------------------------------------------------
+
 
 ElectricFlow DSL Example: Print out JSON equivalent of property sheet
 
@@ -11,28 +21,39 @@ Instructions:
 
 */
 
+def CurrentProject = 'dslsamples'
 
-project "Properties2JSON",{
+project CurrentProject,{
 	// Sample property sheet
-	property "root",{
-		property "rootProp", value: "xyz"
-		property "noval"
-		property "expansion", value: '$[/myProject]'
-		property "sub1",{
-				property "prop1", value: "123"
-				property "prop2", value: "456"
-			property "subSub",{
-				property "prop3", value: "890"
+	property "expandedJson",{
+		property 'array1', {
+			property '0', value: '1'
+			property '1', value: '2'
+		}
+		property 'sub1', {
+			property 'sub2', {
+				property 'array1', {
+					property '0', value: '6'
+					property '1', value: '8'
+				}
+				value1 = 'val'
+				value2 = '4'
 			}
+			value1 = '1'
 		}
-		property "sub2",{
-			property "propA", value: "abc"
-		}
+		value1 = 'a value'
+		value2 = '100'
 	}
+
 	
-	procedure "prop2json", description: "Print out JSON of property sheet",{
-		formalParameter "path", defaultValue: "/projects/Properties2JSON/root",
+	procedure "properties2json", description: "Print out JSON of property sheet",{
+		formalParameter "path", defaultValue: "/myProject/expandedJson",
 			required: true, description: "Path to property sheet"
+
+		formalOutputParameter 'jsonProperties', {
+			description = 'Property sheets converted to JSON'
+		}
+
 		step "Generate JSON from properties", shell: "ec-groovy", description: "See log or Job property PropertyJSON for output",
 			command: '''\
 				import groovy.json.*
@@ -65,7 +86,7 @@ project "Properties2JSON",{
 				// println PropertyStucture.property[0].propertySheet.property.getClass() // class java.util.ArrayList
 				def OutputDataStructure = [(PropertyName):prop2json(PropertyStucture.property)]
 				println pretty(OutputDataStructure)
-				ef.setProperty(propertyName: "/myJob/PropertyJSON", value: pretty(OutputDataStructure))
+				ef.setOutputParameter( outputParameterName: "jsonProperties", value: pretty(OutputDataStructure))
 			'''.stripIndent()
 	} // procedure
 } // project
