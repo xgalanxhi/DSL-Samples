@@ -21,6 +21,9 @@ done
 Find how many active pipeline runs
 ectool countObjects flowRuntimeId --maxIds 1000 --filters "[{propertyName=>'finish',operator=>'isNull'},{propertyName=>'projectName',operator=>'equals',operand1=>'My Project'},{propertyName=>'pipelineName',operator=>'equals',operand1=>'My Pipeline'}]"
 
+Changing from and to or
+--filters "{operator=>'or', filter=>[{propertyName=>'finish',operator=>'isNull'},{propertyName=>'projectName',operator=>'equals',operand1=>'My Project'},{propertyName=>'pipelineName',operator=>'equals',operand1=>'My Pipeline'}]}"
+
 */
 
 // Imports needed for invoking findObjects in the DSL script
