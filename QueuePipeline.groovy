@@ -2,8 +2,25 @@
 
 CloudBees CD/RO DSL: Queued Pipeline
 
-This example pipeline illustrates how pipeline queuing can be implemented with CD/RO. It involves a task at the beginning of the pipeline that identifies any running pipelines that started before the current one and waits for those to complete. Note that other "queued" will be "running" but waiting their turn.
+This example pipeline illustrates how pipeline queuing can be implemented with
+CD/RO. It involves a task at the beginning of the pipeline that identifies any
+running pipelines that started before the current one and waits for those to
+complete. Note that other "queued" pipeline runs will be "running" but waiting
+their turn to advance.
 
+Instructions
+0. Apply this DSL using the command line or the DSL IDE
+	ectool evalDsl --dslFile QueuePipeline.groovy
+1. Runs several instances of the pipeline from the UI or commandline,
+   DSL-Samples :: Queued Pipeline
+   	ectool runPipeline "DSL-Samples" "Queued Pipeline"
+2. Examine the pipeline runs. Note that one of them has advanced beyond the
+   queuing task "Wait for previous", while the others are still running this
+   task.
+3. Allow the advanced pipeline to complete by approving the manual task.
+4. Note that the next pipeline has started in sequence. The sequence can be
+   seen in name of the pipeline run, for example,
+   "Queued Pipeline_3_20230818160652" was the third pipeline run.
 
 */
 
