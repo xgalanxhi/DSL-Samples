@@ -1,0 +1,3 @@
+# Task Hook examples
+
+In CloudBees CD/RO Version 2023.10 we will be introducing the Task Hook feature. This feature allows developers to add to task definitions a procedure call or command block to be executed as the last step of the task's job. This is useful for extending the functionality of plugins and for Third-party deployers. In both case, the feature makes it possible to parse the logs of that task. In the case of plugins this make it possible to implement postp-like functionality. In the case of Third-party deployers it make it possible to extract details of what was deployed from the logs in order to update environment inventory.
