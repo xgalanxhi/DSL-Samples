@@ -1,4 +1,4 @@
 # Task Hook examples
 The Task hook functionality is available for CloudBees CD/RO version 2023.10 or higher. This feature allows the addition of a procedure or command as the last step of a deployment task. Adding a task hook extends functionality of plugins and third-party deployers by enabling log parsing, extraction of deployment data and updating of the environment inventory.
-[CI_Deploy_parse_procedure.groovy](CI_Deploy_parse_procedure.groovy): Use a task hook command to parse a CI job task log file. If the task is set as a Deploy operation, the artifact data extracted from the log will be used for environment inventory.
-[TaskHookSampleRelease.groovy](TaskHookSampleRelease.groovy): Use this procedure for a release model which includes a Deploy task. This procedure will generate the log files for the deployment and populate the environment inventory.
+- [CI_Deploy_parse_procedure.groovy](CI_Deploy_parse_procedure.groovy): Use a task hook command to parse a CI job task log file. If the task is set as a Deploy operation, the artifact data extracted from the log will be used for environment inventory.
+- [TaskHookSampleRelease.groovy](TaskHookSampleRelease.groovy): Use this procedure for a release model which includes a Deploy task. This procedure will generate the log files for the deployment and populate the environment inventory.
