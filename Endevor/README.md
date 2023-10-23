@@ -23,4 +23,7 @@ project CurrentProject,{
 
 ## Example
 
-<<Example of running the sample>>
+
+If you would like to watch a video on the pipeline running you can check out the Youtube link  bellow
+
+[![alt text](https://i9.ytimg.com/vi/zwUu3e3TgFo/mqdefault.jpg?sqp=CIS42qkG-oaymwEmCMACELQB8quKqQMa8AEB-AG4B4AC0AWKAgwIABABGBMgPih_MA8=&rs=AOn4CLBybUbsCpsFrYrfRgk3bbqJuc-pEQ)](https://youtu.be/zwUu3e3TgFo "Youtube Video")
