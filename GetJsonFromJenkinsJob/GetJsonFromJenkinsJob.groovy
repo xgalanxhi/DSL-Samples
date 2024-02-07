@@ -10,14 +10,12 @@
 ---------------------------------------------------------------------------------
 
 
-ElectricFlow DSL Example: Print out JSON equivalent of property sheet
+ElectricFlow DSL Example: load and parse a json file from Jenkins into CDRO
 
 Instructions:
 1. Run this DSL code from the command line, DSL Editor or DSLIDE
-		Command line: ectool evalDsl --dslFile prop2json.groovy
-2. Run the procedure against the sample property sheet (default parameter value)
-	or other property sheet. Make sure to reference the property using XPATH, e.g.,
-	/projects/My Project/pipelines/My Pipeline/stages/First Stage/myPropertySheetName
+		Command line: ectool evalDsl --dslFile GetJsonFromJenkinsJob.groovy
+2. Run the procedure 
 
 */
 
