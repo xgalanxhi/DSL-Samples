@@ -1,4 +1,4 @@
-# json2properties & properties2json
+# GetJsonFromJenkinsJob
 
 ## Description
 
