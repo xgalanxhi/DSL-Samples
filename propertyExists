@@ -1,0 +1,1 @@
+// $[/javascript path.to.property!=null] - returns true if the property exists and false if it does not
