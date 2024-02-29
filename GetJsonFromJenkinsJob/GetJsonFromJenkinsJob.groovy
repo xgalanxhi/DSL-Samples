@@ -1,4 +1,4 @@
-*
+/*
  Copyright 2024 Cloudbees
 
  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -22,7 +22,7 @@ Instructions:
 def CurrentProject = 'dslsamples'
 
 procedure 'GetJsonFromJenkinsJob', {
-  projectName =  CurrentProject,
+  projectName =  CurrentProject
   timeLimit = '0'
 
   formalParameter 'JenkinsConfig', {
@@ -44,6 +44,45 @@ procedure 'GetJsonFromJenkinsJob', {
     type = 'entry'
   }
 
+  step 'Transform Jenkins Job Path', {
+    description = 'Fix string to append /job/ delimiter between folder paths within Jenkins job path.'
+    command = '''import com.electriccloud.client.groovy.ElectricFlow
+import com.electriccloud.client.groovy.models.*
+
+
+ElectricFlow ef = new ElectricFlow()
+
+job_name= \'$[JenkinsJob]\'
+
+def folders = job_name.split(\'/\')
+  // Remove empty elements
+    folders = folders.findAll { it }
+
+    // Initialize the updated path
+    def updatedPath = ""
+
+    // Iterate through folders and build the updated path
+    for (int i = 0; i < folders.size(); i++) {
+        // Skip iteration if folder name is "job"
+        if (folders[i] == "job") {
+            continue
+        }
+
+        // Add folder to the updated path
+        updatedPath += (i > 0 ? "/job/" : "") + folders[i]
+  }
+
+ef.setProperty(
+                propertyName: \'/myJob/updated_path\',
+                value: updatedPath )
+'''
+    procedureName = 'GetJsonFromJenkinsJob'
+    shell = 'ec-groovy'
+    timeLimit = '0'
+    timeLimitUnits = 'seconds'
+    workspaceName = 'default'
+  }
+
   step 'Get Artifact From Jenkins', {
     actualParameter = [
       'artifacts': '$[JenkinsArtifact]',
@@ -58,6 +97,8 @@ procedure 'GetJsonFromJenkinsJob', {
     timeLimit = '0'
     timeLimitUnits = 'seconds'
   }
+
+
 
   step 'Get JSON Data', {
     command = '''import com.electriccloud.client.groovy.ElectricFlow
