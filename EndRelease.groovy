@@ -1,3 +1,9 @@
+/*
+
+Pipeline that can run asynchrously in a Release to end the release and set the ACL to Deny everyone write and execute permissions. This ensures no one can alter the Properties of the Release after it is closed
+
+*/
+
 project 'CloudBees', {
   pipeline 'EndRelease', {
     projectName = 'CloudBees'
